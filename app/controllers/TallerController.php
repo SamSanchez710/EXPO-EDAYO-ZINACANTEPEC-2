@@ -9,23 +9,22 @@ class TallerController {
     }
 
     public function list() {
-        return $this->model->getTalleres();
+        return $this->model->getAll();
     }
 
     public function get($id) {
-        return $this->model->getTallerById($id);
+        return $this->model->getById($id);
     }
 
-    public function create($data) {
-        return $this->model->createTaller($data);
+    public function create($data, $mesas) {
+        return $this->model->create($data, $mesas);
     }
 
-    public function update($id, $data) {
-        return $this->model->updateTaller($id, $data);
+    public function update($id, $data, $mesas) {
+        return $this->model->update($id, $data, $mesas);
     }
 
     public function delete($id) {
-        return $this->model->deleteTaller($id);
+        return $this->model->delete($id);
     }
 }
-?>

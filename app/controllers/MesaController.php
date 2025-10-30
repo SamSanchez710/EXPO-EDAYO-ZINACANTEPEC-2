@@ -1,14 +1,11 @@
 <?php
-require_once __DIR__ . '/../models/MesasModel.php';
-require_once __DIR__ . '/../models/TalleresModel.php';
+require_once __DIR__ . '/../models/MesaModel.php';
 
-class MesasController {
+class MesaController {
     private $model;
-    private $talleresModel;
 
     public function __construct() {
-        $this->model = new MesasModel();
-        $this->talleresModel = new TalleresModel();
+        $this->model = new MesaModel();
     }
 
     public function list() {
@@ -32,7 +29,7 @@ class MesasController {
     }
 
     public function getTalleres() {
-        return $this->talleresModel->getTalleres();
+        return $this->model->getTalleres();
     }
 }
 ?>
