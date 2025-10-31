@@ -1,3 +1,5 @@
+/* public/css/estilos.css */
+
 * {
     margin: 0;
     padding: 0;
@@ -20,7 +22,6 @@ img {
     margin: 0 auto;
 }
 
-/* SECCION: ENCABEZADO DEBAJO DEL MENU DE NAVEGACIÓN */
 .header { 
     position: relative; 
     display: flex;
@@ -157,6 +158,7 @@ img {
     top: 20px;
 }
 
+/* Elementos del menú */
 .navbar-collapse {
     display: flex;
     align-items: center;
@@ -335,122 +337,240 @@ img {
     }
 }
 
-
-/* SECCION: TALLERES */
+/* === SECCIÓN DE TALLERES === */
 .talleres {
-    padding: 0 0 var(--space-16) 0;
-    text-align: center;
+  padding: 0 0 var(--space-16) 0;
+  text-align: center;
+  background-color: var(--color-gray-50);
+  position: relative;
+  overflow: visible; /* ✅ importante: permite que los botones se vean */
+  z-index: 0;
 }
 
-h2 {
-    font-size: var(--text-4xl);
-    color: var(--color-gray-900);
-    margin-top: var(--space-12);
-    font-weight: var(--font-weight-bold);
-    position: relative;
-    display: inline-block;
+/* Título */
+.talleres h2 {
+  font-size: var(--text-4xl);
+  color: var(--color-gray-900);
+  margin-top: var(--space-12);
+  font-weight: var(--font-weight-bold);
+  position: relative;
+  display: inline-block;
 }
 
-h2::after {
-    content: '';
-    position: absolute;
-    bottom: -var(--space-2);
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80px;
-    height: 4px;
-    background: var(--gradient-primary);
-    border-radius: var(--border-radius-full);
+.talleres h2::after {
+  content: '';
+  position: absolute;
+  bottom: -var(--space-2);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: var(--gradient-primary);
+  border-radius: var(--border-radius-full);
 }
 
-/* ====== CARRUSEL DE TALLERES ====== */
-.carousel {
-    position: relative;
-  max-width: 1100px;
-  margin: 0 auto;
-  overflow-x: auto; 
-  overflow-y: hidden;
-  padding: 20px 0;
-  -webkit-overflow-scrolling: touch; 
+/* Carrusel */
+.talleres-carousel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  margin-top: var(--space-12);
+  height: 420px;
+  max-width: 100%;
+  overflow: visible; /* ✅ deja que sobresalgan los botones */
+  z-index: 2;
 }
 
-.carousel-nav {
-  display: none;
+/* Cada taller (slide) */
+.taller-item {
+  flex: 0 0 100%;
+  opacity: 0;
+  transition: opacity 0.6s ease-in-out;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
+.taller-item.active {
+  opacity: 1;
+  pointer-events: all;
+  position: relative;
+}
 
-.carousel::-webkit-scrollbar { height: 8px; }
-.carousel::-webkit-scrollbar-thumb { background: #2C3E50; border-radius: 4px; }
-.carousel::-webkit-scrollbar-track { background: #ddd; border-radius: 4px; }
-
+/* Tarjeta horizontal */
 .card {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border-radius: 16px;
-    overflow: hidden;
-    background: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: white;
+  border-radius: var(--border-radius-2xl);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: var(--space-6);
+  max-width: 900px;
+  height: 340px;
+  margin: 0 auto;
+  transition: transform 0.3s ease;
+  text-align: left;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
 }
 
 .card:hover {
-    transform: translateY(-5px);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+  transform: translateY(-5px);
 }
 
+/* Imagen izquierda */
 .card img {
-    flex: 0 0 50%;
-    background-size: cover;
-    background-position: center;
-    position: relative;
-    border-radius: 16px 0 0 16px;
+  width: 45%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--border-radius-lg);
+  margin-right: var(--space-6);
 }
 
-.card img::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 40px;
-    background: linear-gradient(to right, transparent, white);
+/* Texto y botón centrados vertical y horizontalmente */
+.card .text-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* ✅ centro vertical */
+  align-items: center;     /* ✅ centro horizontal */
+  width: 55%;
+  height: 100%;
+  text-align: center;
 }
 
-
-.card h3 { 
-    font-size: 28px;
-  margin-bottom: 15px;
-  color: #333;
-  font-weight: 700;
-  line-height: 1.2;
-  transform: translateY(1cm);
+.text-content h3 {
+  font-size: var(--text-2xl);
+  color: var(--color-primary);
+  margin-bottom: var(--space-3);
 }
 
-
-.card p { 
-  font-size: 15px;
-  line-height: 1.6;
-  color: #666;
-  margin-bottom: 20px;
-  flex-grow: 1;
-  transform: translateY(1cm);
+.text-content p {
+  color: var(--color-gray-700);
+  font-size: var(--text-base);
+  margin-bottom: var(--space-3);
+  line-height: 1.5;
+  max-width: 90%;
 }
 
+/* Botón debajo del texto */
+.text-content button {
+  background: var(--gradient-primary);
+  color: #fff;
+  border: none;
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--border-radius-full);
+  font-size: var(--text-base);
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  margin-top: var(--space-4);
+}
 
-.card button {
-    margin: 10px 15px 15px 15px;
-    background: #882035;
-    border: none;
-    color: #fff;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: 0.3s;
+.text-content button:hover {
+  transform: scale(1.05);
 }
-.card button:hover { 
-    background: #b98f55; 
+
+/* ✅ Controles del carrusel (ahora siempre visibles y por encima) */
+.carousel-controls {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  transform: translateY(-50%);
+  z-index: 10; /* ✅ más alto que todo */
+  pointer-events: none; /* evita bloquear clics debajo excepto en botones */
 }
+
+.carousel-controls button {
+  background: rgba(0,0,0,0.3);
+  color: white;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  pointer-events: all; /* ✅ permite clics */
+  transition: background 0.3s ease;
+}
+
+.carousel-controls button:hover {
+  background: rgba(0,0,0,0.6);
+}
+
+/* Dots */
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-6);
+  gap: 8px;
+  z-index: 5;
+  position: relative;
+}
+
+.carousel-dots .dot {
+  width: 12px;
+  height: 12px;
+  background: var(--color-gray-400);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.carousel-dots .dot.active {
+  background: var(--gradient-primary);
+  transform: scale(1.2);
+}
+
+/* === BOTONES DEL CARRUSEL === */
+.carousel-controls {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  transform: translateY(-50%);
+  z-index: 9999;
+  pointer-events: none;
+}
+
+/* Botones de navegación */
+.carousel-controls button {
+  background: var(--gradient-primary); /* ✅ usa el mismo degradado del sitio */
+  color: #fff;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  pointer-events: all;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+}
+
+/* Separación de los lados (3 cm hacia adentro) */
+.carousel-controls .prev-btn {
+  margin-left: 4cm;
+}
+
+.carousel-controls .next-btn {
+  margin-right: 4cm;
+}
+
+/* Efecto hover */
+.carousel-controls button:hover {
+  transform: scale(1.1);
+  background: linear-gradient(135deg, #a57f4b, #e9d2a1); /* puedes ajustar tonos */
+  box-shadow: 0 6px 14px rgba(0,0,0,0.35);
+}
+
 
 /* SECCION: ACERCA DE */
 .acerca {
@@ -791,41 +911,8 @@ h2::after {
 }
 
 
-/* ====== MODAL MESAS ====== */
-#modalOverlay {
-    display: none;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.6);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-#modalContent {
-    background: #fff;
-    padding: 20px 25px;
-    max-width: 700px;
-    width: 90%;
-    border-radius: 12px;
-    max-height: 80%;
-    overflow-y: auto;
-    position: relative;
-}
-#modalContent table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-#modalContent th, #modalContent td { border: 1px solid #ccc; padding: 10px; text-align: left; }
-#modalContent th { background: #f2f2f2; }
-.closeBtn {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: #E74C3C;
-    color: #fff;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 5px;
-    cursor: pointer;
-}
+
+
 
 /* ====== RESPONSIVE ====== */
 @media(max-width: 768px){
@@ -837,4 +924,36 @@ h2::after {
     header nav { margin-top: 10px; display: flex; flex-wrap: wrap; }
     header nav a { margin: 5px 10px 0 0; }
     .card { flex: 0 0 200px; }
+}
+
+
+/* 📱 Responsivo Carrusel */
+@media (max-width: 900px) {
+  .card {
+    flex-direction: column;
+    height: auto;
+    text-align: center;
+  }
+
+  .card img {
+    width: 100%;
+    height: 220px;
+    margin-right: 0;
+    margin-bottom: var(--space-4);
+  }
+
+  .card .text-content {
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .text-content p {
+    max-width: 100%;
+  }
+
+  .talleres-carousel {
+    height: auto;
+    min-height: 500px;
+  }
 }
