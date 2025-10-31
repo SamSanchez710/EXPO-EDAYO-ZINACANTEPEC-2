@@ -9,42 +9,95 @@ $talleres = $controller->index();
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Expo Aprende Edayo</title>
-<style>
-/* Estilos básicos */
-body { font-family: Arial, sans-serif; margin:0; padding:0; }
-header { background: #333; color: #fff; padding: 15px 20px; display:flex; justify-content: space-between; align-items: center; }
-header nav a { color: #fff; margin: 0 10px; text-decoration: none; font-weight: bold; }
-section { padding: 50px 20px; }
-h1,h2,h3 { margin-bottom: 20px; }
-.carousel { display:flex; overflow-x:auto; scroll-behavior: smooth; gap:20px; }
-.card { flex:0 0 300px; border:1px solid #ccc; padding:10px; border-radius:8px; text-align:center; }
-.card img { max-width:100%; height:200px; object-fit:cover; border-radius:5px; }
-button { padding:10px 15px; margin-top:10px; cursor:pointer; }
-
-/* Modal */
-#modalOverlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:1000; }
-#modalContent { background:#fff; padding:20px; max-width:600px; width:90%; border-radius:8px; max-height:80%; overflow-y:auto; }
-#modalContent table { width:100%; border-collapse:collapse; margin-top:10px; }
-#modalContent th, #modalContent td { border:1px solid #ccc; padding:8px; text-align:left; }
-#modalContent th { background:#f2f2f2; }
-.closeBtn { background:red; color:#fff; border:none; padding:5px 10px; cursor:pointer; float:right; border-radius:3px; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EXPO APRENDE EDAYO</title>
+    <link rel="stylesheet" href="../css/design-system.css">
+    <link rel="stylesheet" href="../css/components-base.css">
+    <link rel="stylesheet" href="../css/index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="/public/css/carrusel_talleres.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
 <!-- Menú -->
-<header>
-    <div class="logo"><h2>Expo Aprende Edayo</h2></div>
-    <nav>
-        <a href="#inicio">Inicio</a>
-        <a href="#talleres">Talleres</a>
-        <a href="#acerca">Acerca de</a>
-        <a href="#contacto">Contáctanos</a>
-        <a href="login.php">Iniciar sesión</a>
-    </nav>
+<header class="header" id="inicio">
+        
+<div class="navigation-wrap start-header start-style">
+    <div class="container">
+        <nav class="navbar">
+            <a class="navbar-brand" href="#">
+                <img src="../images/logo.png" alt="logo" style="height:50px;">
+            </a>
+            
+            <button class="navbar-toggler" type="button">
+                <span class="navbar-toggler-icon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </span>
+            </button>
+            
+            <div class="navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#inicio">
+                            <i class="fas fa-home"></i>
+                            Inicio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#talleres">
+                            <i class="fas fa-laptop-code"></i>
+                            Talleres
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#acerca">
+                            <i class="fas fa-info-circle"></i>
+                            Acerca De
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contacto">
+                            <i class="fas fa-envelope"></i>
+                            Contáctanos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn-login" href="#" id="openLogin">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Iniciar Sesión
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+</div>
+
+    <div class="header-content container">
+        <div class="header-txt">
+            <h1>Expo Aprende EDAYO Zinacantepec</h1>
+            <p>
+                Descubre tu potencial, aprende haciendo.
+                En Expo Aprende EDAYO Zinacantepec, 
+                te ofrecemos la oportunidad de explorar y
+                dominar nuevas habilidades a través de una 
+                variedad de mesas de trabajo en diferentes 
+                talleres prácticos, diseñados para 
+                impulsar tu creatividad y tu futuro.
+            </p>
+            <div class="butons">
+                <a href="#" class="btn btn-primary btn-lg" id="btnInscribete">
+                    <i class="fas fa-arrow-right"></i> Inscribete Ya!
+                </a>
+            </div>
+        </div>
+    </div>
 </header>
 
 <!-- Sección Inicio -->
