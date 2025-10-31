@@ -25,7 +25,7 @@ session_start();
             <li><a href="dashboard.php">Dashboard</a></li>
             <li><a href="talleres/index.php">Talleres</a></li>
             <li><a href="mesas/mesas_index.php">Mesas</a></li>
-            <li><a href="inscriptions.php">Inscripciones</a></li>
+            <li><a href="inscripcciones/inscripciones_index.php">Inscripciones</a></li>
             <li><a href="reports.php">Reportes</a></li>
             <li><a href="usuarios/index.php">Usuarios</a></li>
             <li><a href="settings.php">Configuración</a></li>
