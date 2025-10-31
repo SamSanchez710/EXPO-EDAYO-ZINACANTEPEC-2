@@ -22,11 +22,11 @@ session_start();
 
     <nav>
         <ul>
-            <li><a href="dashboard.php">Dashboard</a></li>
+            <li><a href="dashboard/index.php">Dashboard</a></li>
             <li><a href="talleres/index.php">Talleres</a></li>
             <li><a href="mesas/mesas_index.php">Mesas</a></li>
-            <li><a href="inscripcciones/inscripciones_index.php">Inscripciones</a></li>
-            <li><a href="reports.php">Reportes</a></li>
+            <li><a href="inscripciones/index.php">Inscripciones</a></li>
+            <li><a href="reportes/index.php">Reportes</a></li>
             <li><a href="usuarios/index.php">Usuarios</a></li>
             <li><a href="settings.php">Configuración</a></li>
         </ul>
