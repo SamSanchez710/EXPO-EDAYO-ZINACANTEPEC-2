@@ -4,29 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Expo Edayo</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #f5f5f5; }
-        .login-container { width: 300px; margin: 100px auto; padding: 20px; background: #fff; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);}
-        input { width: 100%; padding: 10px; margin: 5px 0; }
-        button { padding: 10px; width: 100%; background: #007bff; color: #fff; border: none; cursor: pointer; }
-        .error { color: red; }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/login.css">
+    <link rel="stylesheet" href="../css/modal_login.css">
 </head>
 <body>
     <div class="login-container">
         <h2>Login</h2>
-
+        
         <?php if(isset($error)) echo "<p class='error'>$error</p>"; ?>
-
+        
         <form method="POST" action="../../app/controllers/LoginController.php">
-            <input type="email" name="email" placeholder="Correo" required>
-            <input type="password" name="password" placeholder="Contraseña" required>
-            <button type="submit">Ingresar</button>
+            <div class="input-group">
+                <div class="input-container">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" name="email" placeholder="Correo" required>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <div class="input-container">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" name="password" placeholder="Contraseña" required>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <button type="submit">
+                    <span class="btn-text">Ingresar</span>
+                    <div class="loading-spinner"></div>
+                </button>
+            </div>
         </form>
+        
+        <div style="text-align:center; margin-top:10px;">
+            <a href="#" id="openRegister">¿No tienes cuenta? Regístrate</a>
+        </div>
     </div>
-    <div style="text-align:center; margin-top:10px;">
-    <a href="register.php">¿No tienes cuenta? Regístrate</a>
-</div>
-
 </body>
 </html>

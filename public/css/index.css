@@ -957,3 +957,44 @@ img {
     min-height: 500px;
   }
 }
+
+
+/* Modal de login - AISLADO PARA NO AFECTAR PÁGINA PRINCIPAL */
+#modalOverlayLogin {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    backdrop-filter: blur(5px);
+}
+
+#modalContentLogin {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    width: 350px;
+    max-width: 90%;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    position: relative;
+    z-index: 10000;
+    margin: 0;
+}
+
+#modalOverlayLogin .closeBtn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #882035;
+    z-index: 10001;
+}
+

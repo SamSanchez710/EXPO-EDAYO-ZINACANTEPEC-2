@@ -20,6 +20,12 @@ $talleres = $controller->index();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+    /* Estilos básicos para el modal */
+    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background: rgba(0,0,0,0.5); }
+    .modal-content { background: #fff; margin: 10% auto; padding: 20px; border-radius: 10px; width: 350px; position: relative; }
+    .close { position: absolute; top: 10px; right: 15px; font-size: 25px; cursor: pointer; }
+</style>
 </head>
 <body>
 
@@ -66,13 +72,16 @@ $talleres = $controller->index();
                             <i class="fas fa-envelope"></i>
                             Contáctanos
                         </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link btn-login" href="#" id="openLogin">
-                            <i class="fas fa-sign-in-alt"></i>
-                            Iniciar Sesión
-                        </a>
-                    </li>
+             <li class="nav-item">
+    <a class="nav-link btn-login" href="#" id="openLogin">
+        <i class="fas fa-sign-in-alt"></i>
+        Iniciar Sesión
+    </a>
+</li>
+
+    </a>
+</li>
+
                 </ul>
             </div>
         </nav>
@@ -99,8 +108,6 @@ $talleres = $controller->index();
         </div>
     </div>
 </header>
-
-
 
 <section id="talleres" class="talleres">
   <h2>Talleres Disponibles</h2>
@@ -277,10 +284,19 @@ $talleres = $controller->index();
 <!-- Modal para mesas -->
 <div id="modalOverlay">
     <div id="modalContent">
-        <button class="closeBtn" onclick="closeModal()">Cerrar</button>
+        
         <div id="modalBody"></div>
     </div>
 </div>
+
+<!-- Modal para login -->
+<div id="modalOverlayLogin">
+  <div id="modalContentLogin">
+    <button class="closeBtnLogin" onclick="closeModalLogin()" title="Cerrar">×</button>
+    <div id="modalBodyLogin"></div>
+  </div>
+</div>
+
 
 <script>
 // Función abrir modal con mesas
@@ -292,13 +308,61 @@ function openModal(tallerId){
         document.getElementById('modalOverlay').style.display = 'flex';
     });
 }
+
 function closeModal(){
     document.getElementById('modalOverlay').style.display = 'none';
     document.getElementById('modalBody').innerHTML = '';
 }
+
+// Función abrir modal con login
+document.getElementById('openLogin').addEventListener('click', function(e){
+    e.preventDefault();
+    openModalLogin();
+});
+
+function openModalLogin(){
+    fetch(`../../public/Vistas/login.php`)
+    .then(res => res.text())
+    .then(html => {
+        document.getElementById('modalBodyLogin').innerHTML = html;
+        document.getElementById('modalOverlayLogin').style.display = 'flex';
+    document.body.classList.add('modal-open');
+
+        // Agregar listener al enlace de registro si existe
+        const registerLink = document.getElementById('openRegister');
+        if(registerLink){
+            registerLink.addEventListener('click', function(e){
+                e.preventDefault();
+                openRegister();
+            });
+        }
+    });
+}
+
+function closeModalLogin(){
+    document.getElementById('modalOverlayLogin').style.display = 'none';
+    document.getElementById('modalBodyLogin').innerHTML = '';
+}
+
+// Función abrir formulario de registro dentro del mismo modal
+function openRegister(){
+    fetch(`../../public/Vistas/register.php`)
+    .then(res => res.text())
+    .then(html => {
+        document.getElementById('modalBodyLogin').innerHTML = html;
+        
+        
+        const backToLoginBtn = document.getElementById('backToLogin');
+        if(backToLoginBtn){
+            backToLoginBtn.addEventListener('click', function(e){
+                e.preventDefault();
+                openModalLogin(); 
+            });
+        }
+    });
+}
 </script>
 
 <script src="../JavaScript/carrusel_talleres.js"></script>
-
 </body>
 </html>

@@ -1,0 +1,204 @@
+/* === ESTILOS ESPECÍFICOS PARA LOGIN === */
+.login-container {
+  background: #FFFFFF;
+  width: 100%;
+  max-width: 400px;
+  border-radius: 15px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  padding: 40px 30px 30px;
+  animation: formAppear 0.6s ease-out;
+}
+
+.login-container h2 {
+  color: #882035;
+  font-size: 22px;
+  font-weight: 700;
+  text-align: center;
+  margin: 0 0 25px;
+  position: relative;
+}
+
+.login-container h2::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, #882035, #b98f55);
+  border-radius: 2px;
+}
+
+.login-container form {
+  margin-bottom: 15px;
+}
+
+.login-container .input-group {
+  margin: 0 0 18px;
+  position: relative;
+}
+
+.login-container .input-container {
+  position: relative;
+  width: 100%;
+}
+
+.login-container .input-container i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #882035;
+  font-size: 1em;
+  z-index: 2;
+}
+
+.login-container input[type="email"],
+.login-container input[type="password"] {
+  outline: none;
+  background: rgba(136, 32, 53, 0.05);
+  width: 100%;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 12px 12px 12px 40px;
+  color: #333;
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.login-container input[type="email"]:focus,
+.login-container input[type="password"]:focus {
+  background: #ffffff;
+  border-color: #882035;
+  box-shadow: 0 0 0 3px rgba(136, 32, 53, 0.1);
+}
+
+.login-container input::placeholder {
+  color: #999;
+}
+
+.login-container button[type="submit"] {
+  background: linear-gradient(135deg, #882035, #a52d45);
+  width: 100%;
+  border: 0;
+  border-radius: 8px;
+  padding: 14px 20px;
+  color: #FFFFFF;
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 8px;
+}
+
+.login-container button[type="submit"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(136, 32, 53, 0.5);
+}
+
+.login-container a {
+  color: #882035;
+  font-size: 13px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.login-container a:hover {
+  color: #b98f55;
+  text-decoration: underline;
+}
+
+.login-container .error {
+  color: #dc3545;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 5px 8px;
+  background: rgba(220, 53, 69, 0.1);
+  border-radius: 4px;
+  border-left: 2px solid #dc3545;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+@keyframes formAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@media (max-width: 480px) {
+  .login-container {
+    max-width: 100%;
+    padding: 30px 20px 20px;
+  }
+  
+  .login-container h2 {
+    font-size: 20px;
+  }
+  
+  .login-container input[type="email"],
+  .login-container input[type="password"] {
+    padding: 10px 10px 10px 35px;
+    font-size: 13px;
+  }
+  
+  .login-container button[type="submit"] {
+    padding: 12px 20px;
+    font-size: 13px;
+  }
+}
+
+/* Botón de cerrar modal con icono X - SOLO DENTRO DEL MODAL */
+#modalOverlayLogin .closeBtn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 35px;
+    height: 35px;
+    background: #FFFFFF;
+    border: 2px solid #882035;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #882035;
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(136, 32, 53, 0.3);
+    transition: all 0.3s ease;
+    z-index: 10001;
+}
+
+#modalOverlayLogin .closeBtn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(136, 32, 53, 0.4);
+    background: #882035;
+    color: #FFFFFF;
+}
+
+#modalOverlayLogin .closeBtn:active {
+    transform: scale(1.05);
+}
+
+/* Quitar el texto y mostrar solo la X */
+#modalOverlayLogin .closeBtn {
+    font-size: 0; /* Oculta el texto */
+}
+
+#modalOverlayLogin .closeBtn::before {
+    content: '\00d7'; /* Código Unicode para X */
+    font-family: Arial, sans-serif;
+    font-size: 20px; /* Tamaño de la X */
+    font-weight: bold;
+    line-height: 1;
+}
