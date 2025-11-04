@@ -30,12 +30,15 @@ class LoginController {
                     exit;
                 }
             } else {
-                $error = "Correo o contraseña incorrectos";
-                include __DIR__ . '/../Vistas/login.php';
+                // Mostrar alerta sin redirigir ni incluir otra vista
+                echo "<script>
+                    alert('Correo o contraseña incorrectos');
+                    window.history.back(); // vuelve a la página anterior
+                </script>";
+                exit;
             }
-        } else {
-            include __DIR__ . '/../Vistas/login.php';
         }
+        // Aquí ya no hacemos include, así el usuario queda en la página actual
     }
 
     // Cerrar sesión
@@ -53,4 +56,3 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
 } else {
     $controller->login();
 }
-?>
