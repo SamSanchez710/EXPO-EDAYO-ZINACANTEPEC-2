@@ -40,6 +40,7 @@ session_start();
       <li><a href="#" class="nav-link" data-section="inscripciones"> <i class="fas fa-users"></i> Inscripciones</a></li>
       <li><a href="#" class="nav-link" data-section="mesas"> <i class="fas fa-table"></i> Mesas</a></li>
       <li><a href="#" class="nav-link" data-section="reportes"> <i class="fas fa-chart-bar"></i> Reportes</a></li>
+      <li><a href="#" class="nav-link" data-section="configuracion"> <i class="fas fa-chart-bar"></i> Configuracion</a></li>
     </ul>
   </nav>
 
@@ -128,6 +129,9 @@ session_start();
             break;
           case 'dashboard':
             loadCRUD('dashboard/index.php');
+            break;
+          case 'configuracion':
+            loadCRUD('configuracion/index.php');
             break;
           default:
             dynamicSection.innerHTML = `<p>Bienvenido al Dashboard</p>`;
