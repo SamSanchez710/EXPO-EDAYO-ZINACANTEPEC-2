@@ -1,5 +1,13 @@
 <?php
-session_start();
+require_once '../../../app/controllers/ConfiguracionController.php';
+
+$controller = new ConfiguracionController();
+$usuario = null;
+
+if (isset($_SESSION['user_id'])) {
+    $data = $controller->index();
+    $usuario = $data['usuario'] ?? null;
+}
 ?>
 
 <!DOCTYPE html>
@@ -22,16 +30,23 @@ session_start();
   <!-- Sidebar -->
   <nav class="sidebar" id="sidebar">
     <div class="perfil-avatar">
-      <div class="avatar-container">
-        <img src="../../images/avatar_default.png" alt="Avatar Admin" class="avatar-animado">
-        <button class="editar-avatar-btn" onclick="document.getElementById('avatar').click()">
-          <i class="fas fa-pencil-alt"></i>
-        </button>
-        <input type="file" id="avatar" accept="image/*" style="display:none;">
-      </div>
-      <h3 style="color: white; margin: 10px 0 5px 0;">Administrador</h3>
-      <p style="color: #b98f55; margin: 0; font-size: 0.9em;">admin@edayo.edu.mx</p>
-    </div>
+  <div class="avatar-container">
+    <img src="../../../app/controllers/ConfiguracionController.php?action=foto" 
+         alt="Avatar Admin" class="avatar-animado" id="avatarImg">
+    <button class="editar-avatar-btn" onclick="document.getElementById('avatar').click()">
+      <i class="fas fa-pencil-alt"></i>
+    </button>
+    <input type="file" id="avatar" accept="image/*" style="display:none;" 
+           onchange="subirAvatar(this)">
+  </div>
+  <h3 style="color: white; margin: 10px 0 5px 0;">
+    <?php echo htmlspecialchars($usuario['nombre'] ?? 'Usuario'); ?>
+</h3>
+<p style="color: #b98f55; margin: 0; font-size: 0.9em;">
+    <?php echo htmlspecialchars($usuario['email'] ?? 'correo@dominio.com'); ?>
+</p>
+
+</div>
 
     <ul>
       <li><a href="#" class="nav-link active" data-section="dashboard"> <i class="fas fa-chart-line"></i> Dashboard</a></li>
@@ -191,7 +206,29 @@ function loadCRUD(path) {
       document.getElementById('modalContent').innerHTML = '';
     }
 
-  
+    function subirAvatar(input) {
+    const file = input.files[0];
+    if(!file) return;
+
+    const formData = new FormData();
+    formData.append('avatar', file);
+
+    fetch('../../../app/controllers/ConfiguracionController.php?action=actualizarFotoPerfil', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(r => {
+        if(r.success){
+            alert(r.message);
+            document.getElementById('avatarImg').src = '../../../app/controllers/ConfiguracionController.php?action=foto&t=' + new Date().getTime();
+        } else {
+            alert('Error: ' + r.message);
+        }
+    })
+    .catch(()=>alert('Error al subir la foto'));
+}
+
   </script>
 </body>
 </html>

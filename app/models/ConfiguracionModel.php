@@ -25,7 +25,6 @@ class ConfiguracionModel {
         $prefs = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$prefs) {
-            // Si no existe, devolver valores por defecto
             return [
                 'tema' => 'claro',
                 'notificaciones' => 1,
@@ -67,17 +66,14 @@ class ConfiguracionModel {
     // Guardar preferencias en BD
     public function guardarPreferencias($user_id, $tema, $notificaciones, $formato_fecha, $idioma) {
         try {
-            // Verificar si ya existe
             $stmt = $this->conn->prepare("SELECT id FROM preferencias WHERE usuario_id = :user_id LIMIT 1");
             $stmt->bindParam(':user_id', $user_id);
             $stmt->execute();
             $pref = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($pref) {
-                // Actualizar
                 $stmt = $this->conn->prepare("UPDATE preferencias SET tema = :tema, notificaciones = :notificaciones, formato_fecha = :formato_fecha, idioma = :idioma WHERE usuario_id = :user_id");
             } else {
-                // Insertar
                 $stmt = $this->conn->prepare("INSERT INTO preferencias (usuario_id, tema, notificaciones, formato_fecha, idioma) VALUES (:user_id, :tema, :notificaciones, :formato_fecha, :idioma)");
             }
 
@@ -92,5 +88,31 @@ class ConfiguracionModel {
         } catch (Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
+    }
+
+    // ======================================
+    // FOTO DE PERFIL
+    // ======================================
+
+    // Actualizar foto de perfil
+    public function actualizarFotoPerfil($user_id, $foto_data) {
+        try {
+            $stmt = $this->conn->prepare("UPDATE usuarios SET foto_perfil = :foto_data WHERE id = :id");
+            $stmt->bindParam(':foto_data', $foto_data, PDO::PARAM_LOB);
+            $stmt->bindParam(':id', $user_id);
+            $stmt->execute();
+            return true;
+        } catch (Exception $e) {
+            return false;                                                                                 
+        }
+    }
+
+    // Obtener foto de perfil
+    public function obtenerFotoPerfil($user_id) {
+        $stmt = $this->conn->prepare("SELECT foto_perfil FROM usuarios WHERE id = :id");
+        $stmt->bindParam(':id', $user_id);
+        $stmt->execute();
+        $res = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $res ? $res['foto_perfil'] : null;
     }
 }

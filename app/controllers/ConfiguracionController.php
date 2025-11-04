@@ -36,9 +36,42 @@ class ConfiguracionController {
     public function guardarPreferencias($user_id, $tema, $notificaciones, $formato_fecha, $idioma) {
         return $this->model->guardarPreferencias($user_id, $tema, $notificaciones, $formato_fecha, $idioma);
     }
+
+    // ======================================
+    // FOTO DE PERFIL
+    // ======================================
+
+    public function actualizarFotoPerfil($user_id, $foto_data) {
+        $response = ['success'=>false, 'message'=>''];
+
+        if($this->model->actualizarFotoPerfil($user_id, $foto_data)) {
+            $response['success'] = true;
+            $response['message'] = 'Foto de perfil actualizada correctamente.';
+        } else {
+            $response['message'] = 'Error al actualizar la foto de perfil.';
+        }
+
+        return $response;
+    }
+
+    public function obtenerFotoPerfil($user_id) {
+        $foto_data = $this->model->obtenerFotoPerfil($user_id);
+
+        if($foto_data) {
+            header('Content-Type: image/jpeg');
+            echo $foto_data;
+        } else {
+            $foto_por_defecto = file_get_contents('../../images/avatar_default.png');
+            header('Content-Type: image/png');
+            echo $foto_por_defecto;
+        }
+        exit;
+    }
 }
 
+// ======================================
 // AJAX handler
+// ======================================
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     $controller = new ConfiguracionController();
 
@@ -69,8 +102,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             echo json_encode($controller->guardarPreferencias($user_id, $tema, $notificaciones, $formato_fecha, $idioma));
             break;
 
+        case 'actualizarFotoPerfil':
+            if(isset($_FILES['avatar'])) {
+                $foto_data = file_get_contents($_FILES['avatar']['tmp_name']);
+                echo json_encode($controller->actualizarFotoPerfil($user_id, $foto_data));
+            } else {
+                echo json_encode(['success'=>false, 'message'=>'No se recibió archivo']);
+            }
+            break;
+
         default:
             echo json_encode(['success'=>false, 'message'=>'Acción no válida']);
     }
     exit;
+}
+
+// ======================================
+// Obtener foto (GET)
+// ======================================
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'foto') {
+    $controller = new ConfiguracionController();
+    if(isset($_SESSION['user_id'])) {
+        $controller->obtenerFotoPerfil($_SESSION['user_id']);
+    }
 }
