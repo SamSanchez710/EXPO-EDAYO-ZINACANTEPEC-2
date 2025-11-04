@@ -1,12 +1,11 @@
-<?php
-session_start();
-require_once __DIR__ . '/../../../../app/controllers/UserController.php';
-
-$controller = new UserController();
+<?php 
+session_start(); 
+require_once __DIR__ . '/../../../../app/controllers/UserController.php'; 
+$controller = new UserController(); 
 
 // Editar
-$id = isset($_GET['id']) ? intval($_GET['id']) : null;
-$usuario = $id ? $controller->get($id) : null;
+$id = isset($_GET['id']) ? intval($_GET['id']) : null; 
+$usuario = $id ? $controller->get($id) : null; 
 
 // Guardar vía AJAX
 if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax']) && $_POST['ajax'] == 1){
@@ -20,6 +19,11 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax']) && $_POST['aja
         'activo' => isset($_POST['activo']) ? 1 : 0
     ];
 
+    // Manejo de imagen
+    if(isset($_FILES['foto_perfil']) && $_FILES['foto_perfil']['tmp_name'] != ''){
+        $data['foto_perfil'] = file_get_contents($_FILES['foto_perfil']['tmp_name']);
+    }
+
     if(!empty($_POST['id'])){
         $controller->update(intval($_POST['id']), $data);
     } else {
@@ -32,7 +36,6 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax']) && $_POST['aja
 ?>
 
 <h2><?= $usuario ? 'Editar Usuario' : 'Agregar Usuario' ?></h2>
-
 <form id="userForm" enctype="multipart/form-data">
     <input type="hidden" name="id" value="<?= $usuario['id'] ?? '' ?>">
     <input type="hidden" name="ajax" value="1">
@@ -62,33 +65,59 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax']) && $_POST['aja
     <input type="checkbox" name="activo" <?= isset($usuario['activo']) && $usuario['activo'] ? 'checked' : '' ?>><br>
 
     <label>Foto de Perfil:</label><br>
-    <?php if($usuario && $usuario['foto_perfil']): ?>
-        <img src="data:image/jpeg;base64,<?= base64_encode($usuario['foto_perfil']) ?>" width="100" alt="Foto"><br>
-    <?php endif; ?>
-    <input type="file" name="foto_perfil" accept="image/*"><br><br>
+    <img id="previewFoto" 
+         src="<?= $usuario && $usuario['foto_perfil'] ? 'data:image/jpeg;base64,'.base64_encode($usuario['foto_perfil']) : '' ?>" 
+         width="100" 
+         style="<?= $usuario && $usuario['foto_perfil'] ? '' : 'display:none;' ?>" 
+         alt="Foto"><br>
+    <input type="file" name="foto_perfil" accept="image/*" id="fotoInput"><br><br>
 
     <button type="submit"><?= $usuario ? 'Actualizar' : 'Guardar' ?></button>
     <button type="button" onclick="closeModal()">Cancelar</button>
 </form>
 
 <script>
-document.getElementById('userForm').addEventListener('submit', function(e){
-    e.preventDefault();
-    const formData = new FormData(this);
+// Esto se ejecuta una vez que el modal ya insertó este HTML
+(function(){
+    const form = document.getElementById('userForm');
+    const fotoInput = document.getElementById('fotoInput');
+    const previewFoto = document.getElementById('previewFoto');
 
-    fetch('form.php<?= $usuario ? "?id=".$usuario['id'] : "" ?>', {
-        method: 'POST',
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-        if(data.status === 'success'){
-            alert('Usuario guardado correctamente');
-            closeModal();
-            loadSection('usuarios/index.php'); // recargar tabla
+    // Preview de imagen
+    fotoInput.addEventListener('change', function(){
+        const file = this.files[0];
+        if(file){
+            const reader = new FileReader();
+            reader.onload = function(e){
+                previewFoto.src = e.target.result;
+                previewFoto.style.display = 'block';
+            }
+            reader.readAsDataURL(file);
         } else {
-            alert('Error al guardar el usuario');
+            previewFoto.src = '';
+            previewFoto.style.display = 'none';
         }
     });
-});
+
+    // Envío vía AJAX
+    form.addEventListener('submit', function(e){
+        e.preventDefault();
+        const formData = new FormData(this);
+        fetch('form.php<?= $usuario ? "?id=".$usuario['id'] : "" ?>', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.status==='success'){
+                alert('Usuario guardado correctamente');
+                closeModal();
+                loadSection('usuarios/index.php');
+            } else {
+                alert('Error al guardar el usuario');
+            }
+        })
+        .catch(err => alert('Error AJAX: '+err));
+    });
+})();
 </script>

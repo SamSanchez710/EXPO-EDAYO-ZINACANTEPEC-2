@@ -185,20 +185,60 @@ function loadCRUD(path) {
 
     // Modal global
     function openModal(url) {
-      const overlay = document.getElementById('modalOverlay');
-      const content = document.getElementById('modalContent');
+    const overlay = document.getElementById('modalOverlay');
+    const content = document.getElementById('modalContent');
 
-      fetch(url)
-        .then(res => res.text())
-        .then(html => {
-          content.innerHTML = html;
-          overlay.style.display = 'flex';
-        })
-        .catch(err => {
-          content.innerHTML = `<p style="color:red;">Error cargando modal: ${err}</p>`;
-          overlay.style.display = 'flex';
-        });
-    }
+    fetch(url)
+    .then(res => res.text())
+    .then(html => {
+        content.innerHTML = html;
+        overlay.style.display = 'flex';
+
+        // 🔹 Después de insertar el HTML, asignar el listener del input
+        const fotoInput = content.querySelector('#fotoInput');
+        const previewFoto = content.querySelector('#previewFoto');
+        if(fotoInput && previewFoto){
+            fotoInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if(file){
+                    const reader = new FileReader();
+                    reader.onload = function(e){
+                        previewFoto.src = e.target.result;
+                        previewFoto.style.display = 'block';
+                    }
+                    reader.readAsDataURL(file);
+                } else {
+                    previewFoto.src = '';
+                    previewFoto.style.display = 'none';
+                }
+            });
+        }
+
+        // 🔹 También puedes asignar aquí el listener de submit AJAX si quieres
+        const userForm = content.querySelector('#userForm');
+        if(userForm){
+            userForm.addEventListener('submit', function(e){
+                e.preventDefault();
+                const formData = new FormData(this);
+                fetch(url, { method:'POST', body: formData })
+                  .then(res => res.json())
+                  .then(data => {
+                      if(data.status==='success'){
+                          alert('Usuario guardado correctamente');
+                          closeModal();
+                          loadSection('usuarios/index.php');
+                      } else alert('Error al guardar el usuario');
+                  });
+            });
+        }
+
+    })
+    .catch(err => {
+        content.innerHTML = `<p style="color:red;">Error cargando modal: ${err}</p>`;
+        overlay.style.display = 'flex';
+    });
+}
+
 
     function closeModal() {
       const overlay = document.getElementById('modalOverlay');
