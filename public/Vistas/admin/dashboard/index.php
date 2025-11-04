@@ -16,10 +16,14 @@ $data = $controller->index();
         .row { display: flex; flex-wrap: wrap; gap: 20px; }
         .card { background: #f5f5f5; padding: 20px; border-radius: 8px; flex: 1; min-width: 200px; text-align: center; }
         .chart-container { width: 100%; margin-top: 30px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
     </style>
 </head>
 <body>
 
+<div id="dashboardSection">
 <h1>Dashboard</h1>
 
 <div class="row">
@@ -51,7 +55,7 @@ $data = $controller->index();
     <canvas id="chartActividad"></canvas>
 </div>
 
-div class="chart-container">
+<div class="chart-container">
     <h3>Top 5 Talleres con más inscripciones</h3>
     <canvas id="chartTopTalleres"></canvas>
 </div>
@@ -84,74 +88,76 @@ div class="chart-container">
         </tbody>
     </table>
 </div>
+</div> <!-- Fin dashboardSection -->
 
 <script>
-    // Gráfico de inscripciones por taller
-    const ctxTaller = document.getElementById('chartTaller').getContext('2d');
-    const chartTaller = new Chart(ctxTaller, {
-        type: 'bar',
-        data: {
-            labels: <?= json_encode(array_column($data['inscripcionesPorTaller'], 'taller')) ?>,
-            datasets: [{
-                label: 'Inscripciones',
-                data: <?= json_encode(array_column($data['inscripcionesPorTaller'], 'total')) ?>,
-                backgroundColor: 'rgba(54, 162, 235, 0.6)'
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: { legend: { display: false } }
-        }
-    });
+(() => {
+  const root = document.getElementById('dashboardSection') || document;
 
-    // Gráfico de actividad reciente
-    const ctxActividad = document.getElementById('chartActividad').getContext('2d');
-    const chartActividad = new Chart(ctxActividad, {
-        type: 'line',
-        data: {
-            labels: <?= json_encode(array_column($data['actividadReciente'], 'fecha')) ?>,
-            datasets: [{
-                label: 'Inscripciones',
-                data: <?= json_encode(array_column($data['actividadReciente'], 'total')) ?>,
-                borderColor: 'rgba(255, 99, 132, 1)',
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                fill: true,
-                tension: 0.3
-            }]
-        },
-        options: { responsive: true }
-    });
+  // Gráfico de inscripciones por taller
+  const ctxTaller = root.querySelector('#chartTaller').getContext('2d');
+  new Chart(ctxTaller, {
+      type: 'bar',
+      data: {
+          labels: <?= json_encode(array_column($data['inscripcionesPorTaller'], 'taller')) ?>,
+          datasets: [{
+              label: 'Inscripciones',
+              data: <?= json_encode(array_column($data['inscripcionesPorTaller'], 'total')) ?>,
+              backgroundColor: 'rgba(54, 162, 235, 0.6)'
+          }]
+      },
+      options: { responsive: true, plugins: { legend: { display: false } } }
+  });
 
-    // Gráfico Top Talleres
-    const ctxTopTalleres = document.getElementById('chartTopTalleres').getContext('2d');
-    new Chart(ctxTopTalleres, {
-        type: 'bar',
-        data: {
-            labels: <?= json_encode(array_column($data['topTalleres'], 'taller')) ?>,
-            datasets: [{
-                label: 'Inscripciones',
-                data: <?= json_encode(array_column($data['topTalleres'], 'total')) ?>,
-                backgroundColor: 'rgba(255, 159, 64, 0.6)'
-            }]
-        },
-        options: { responsive: true, plugins: { legend: { display: false } } }
-    });
+  // Gráfico de actividad reciente
+  const ctxActividad = root.querySelector('#chartActividad').getContext('2d');
+  new Chart(ctxActividad, {
+      type: 'line',
+      data: {
+          labels: <?= json_encode(array_column($data['actividadReciente'], 'fecha')) ?>,
+          datasets: [{
+              label: 'Inscripciones',
+              data: <?= json_encode(array_column($data['actividadReciente'], 'total')) ?>,
+              borderColor: 'rgba(255, 99, 132, 1)',
+              backgroundColor: 'rgba(255, 99, 132, 0.2)',
+              fill: true,
+              tension: 0.3
+          }]
+      },
+      options: { responsive: true }
+  });
 
-    // Gráfico Mesas Populares
-    const ctxMesas = document.getElementById('chartMesasPopulares').getContext('2d');
-    new Chart(ctxMesas, {
-        type: 'bar',
-        data: {
-            labels: <?= json_encode(array_column($data['mesasPopulares'], 'mesa')) ?>,
-            datasets: [{
-                label: 'Inscripciones',
-                data: <?= json_encode(array_column($data['mesasPopulares'], 'total')) ?>,
-                backgroundColor: 'rgba(75, 192, 192, 0.6)'
-            }]
-        },
-        options: { responsive: true, plugins: { legend: { display: false } } }
-    });
+  // Gráfico Top Talleres
+  const ctxTopTalleres = root.querySelector('#chartTopTalleres').getContext('2d');
+  new Chart(ctxTopTalleres, {
+      type: 'bar',
+      data: {
+          labels: <?= json_encode(array_column($data['topTalleres'], 'taller')) ?>,
+          datasets: [{
+              label: 'Inscripciones',
+              data: <?= json_encode(array_column($data['topTalleres'], 'total')) ?>,
+              backgroundColor: 'rgba(255, 159, 64, 0.6)'
+          }]
+      },
+      options: { responsive: true, plugins: { legend: { display: false } } }
+  });
 
+  // Gráfico Mesas Populares
+  const ctxMesas = root.querySelector('#chartMesasPopulares').getContext('2d');
+  new Chart(ctxMesas, {
+      type: 'bar',
+      data: {
+          labels: <?= json_encode(array_column($data['mesasPopulares'], 'mesa')) ?>,
+          datasets: [{
+              label: 'Inscripciones',
+              data: <?= json_encode(array_column($data['mesasPopulares'], 'total')) ?>,
+              backgroundColor: 'rgba(75, 192, 192, 0.6)'
+          }]
+      },
+      options: { responsive: true, plugins: { legend: { display: false } } }
+  });
+
+})();
 </script>
 
 </body>

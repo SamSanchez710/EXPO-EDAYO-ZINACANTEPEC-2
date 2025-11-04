@@ -1,12 +1,15 @@
 <?php
 session_start();
 require_once __DIR__ . '/../../../../app/controllers/TallerController.php';
+
 $controller = new TallerController();
 
 $id = isset($_GET['id']) ? intval($_GET['id']) : null;
 $taller = $id ? $controller->get($id) : null;
+
 if(!$taller){
-    echo "Taller no encontrado"; exit();
+    echo "Taller no encontrado";
+    exit();
 }
 ?>
 
@@ -14,9 +17,9 @@ if(!$taller){
 
 <p><strong>Imagen:</strong><br>
 <?php if($taller['imagen']): ?>
-    <img src="data:image/jpeg;base64,<?= base64_encode($taller['imagen']) ?>" width="150" alt="Imagen">
+<img src="data:image/jpeg;base64,<?= base64_encode($taller['imagen']) ?>" width="150" alt="Imagen">
 <?php else: ?>
-    Sin imagen
+Sin imagen
 <?php endif; ?>
 </p>
 
@@ -30,16 +33,13 @@ if(!$taller){
 
 <h3>Mesas de Trabajo</h3>
 <?php if($taller['mesas']): ?>
-    <ul>
-        <?php foreach($taller['mesas'] as $m): ?>
-            <li>
-                <?= htmlspecialchars($m['nombre_mesa']) ?> - <?= htmlspecialchars($m['persona_cargo']) ?> 
-                (<?= $m['hora_especifica'] ?>, <?= htmlspecialchars($m['lugar_area']) ?>)
-            </li>
-        <?php endforeach; ?>
-    </ul>
+<ul>
+<?php foreach($taller['mesas'] as $m): ?>
+<li><?= htmlspecialchars($m['nombre_mesa']) ?> - <?= htmlspecialchars($m['persona_cargo']) ?> (<?= $m['hora_especifica'] ?>, <?= htmlspecialchars($m['lugar_area']) ?>)</li>
+<?php endforeach; ?>
+</ul>
 <?php else: ?>
-    <p>No hay mesas asignadas</p>
+<p>No hay mesas asignadas</p>
 <?php endif; ?>
 
-<button onclick="closeModal()">Volver</button>
+<button onclick="closeModal()">Cerrar</button>

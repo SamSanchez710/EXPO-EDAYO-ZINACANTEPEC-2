@@ -3,17 +3,13 @@ require_once __DIR__ . '/../../../../app/models/ReportesModel.php';
 
 $model = new ReportesModel();
 
-// Recibir fecha
 $fecha = isset($_GET['fecha']) ? $_GET['fecha'] : null;
-
 $inscripciones = $model->obtenerInscripcionesPorFecha($fecha);
 
-// Nombre archivo según fecha o "inscripciones"
 $nombre_archivo = $fecha ? "inscripciones_" . $fecha : "inscripciones";
 
-// Encabezados para Excel con UTF-8
 header("Content-Type: application/vnd.ms-excel; charset=utf-8");
-header("Content-Disposition: attachment; filename=".urlencode($nombre_archivo).".xls");
+header("Content-Disposition: attachment; filename=" . urlencode($nombre_archivo) . ".xls");
 header("Pragma: no-cache");
 header("Expires: 0");
 
@@ -33,7 +29,7 @@ echo "<tr>
         <th>Fecha Registro</th>
       </tr>";
 
-foreach($inscripciones as $i){
+foreach ($inscripciones as $i) {
     echo "<tr>
             <td>{$i['id']}</td>
             <td>{$i['nombre']}</td>
@@ -49,4 +45,3 @@ foreach($inscripciones as $i){
           </tr>";
 }
 echo "</table>";
-?>

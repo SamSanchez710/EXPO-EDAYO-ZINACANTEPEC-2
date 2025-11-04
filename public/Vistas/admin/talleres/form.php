@@ -6,7 +6,7 @@ $controller = new TallerController();
 $id = isset($_GET['id']) ? intval($_GET['id']) : null;
 $taller = $id ? $controller->get($id) : null;
 
-// Guardar AJAX
+// Guardar vía AJAX
 if($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['ajax']) && $_POST['ajax']==1){
     $mesas = [];
     if(isset($_POST['mesas'])){
@@ -50,21 +50,28 @@ if($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['ajax']) && $_POST['ajax'
 
 <form id="tallerForm" enctype="multipart/form-data">
 <input type="hidden" name="ajax" value="1">
+
 <label>Nombre:</label><br>
 <input type="text" name="nombre" value="<?= $taller['nombre'] ?? '' ?>" required><br>
+
 <label>Descripción:</label><br>
 <textarea name="descripcion" required><?= $taller['descripcion'] ?? '' ?></textarea><br>
+
 <label>Imagen:</label><br>
 <?php if($taller && $taller['imagen']): ?>
 <img src="data:image/jpeg;base64,<?= base64_encode($taller['imagen']) ?>" width="100"><br>
 <?php endif; ?>
 <input type="file" name="imagen" accept="image/*"><br>
+
 <label>Hora Inicio:</label><br>
 <input type="time" name="hora_inicio" value="<?= $taller['hora_inicio'] ?? '10:00' ?>"><br>
+
 <label>Hora Fin:</label><br>
 <input type="time" name="hora_fin" value="<?= $taller['hora_fin'] ?? '12:00' ?>"><br>
+
 <label>Lugar:</label><br>
 <input type="text" name="lugar" value="<?= $taller['lugar'] ?? '' ?>"><br>
+
 <label>Activo:</label>
 <input type="checkbox" name="activo" <?= isset($taller['activo']) && $taller['activo'] ? 'checked' : '' ?>><br><br>
 
@@ -129,12 +136,7 @@ document.getElementById('tallerForm').addEventListener('submit', function(e){
         if(data.status==='success'){
             alert('Taller guardado correctamente');
             closeModal();
-            fetch('index.php').then(res=>res.text()).then(html=>{
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html,'text/html');
-                const newTable = doc.querySelector('table');
-                document.querySelector('table').replaceWith(newTable);
-            });
+            loadSection('talleres/index.php');
         } else {
             alert('Error al guardar el taller');
         }

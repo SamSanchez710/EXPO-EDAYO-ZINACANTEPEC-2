@@ -22,7 +22,8 @@ foreach($talleres as $t){
 }
 ?>
 
-<h1>Detalles de la Mesa</h1>
+<h2>Detalles de la Mesa</h2>
+
 <p><strong>ID:</strong> <?= $mesa['id'] ?></p>
 <p><strong>Nombre Mesa:</strong> <?= htmlspecialchars($mesa['nombre_mesa']) ?></p>
 <p><strong>Persona a cargo:</strong> <?= htmlspecialchars($mesa['persona_cargo']) ?></p>
@@ -30,4 +31,4 @@ foreach($talleres as $t){
 <p><strong>Lugar/Área:</strong> <?= htmlspecialchars($mesa['lugar_area']) ?></p>
 <p><strong>Taller:</strong> <?= htmlspecialchars($taller_nombre) ?></p>
 
-<button onclick="closeModal()">Volver</button>
+<button onclick="closeModal()">Cerrar</button>

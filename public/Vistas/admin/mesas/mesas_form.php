@@ -75,14 +75,7 @@ document.getElementById('mesaForm').addEventListener('submit', function(e){
         if(data.status === 'success'){
             alert('Mesa guardada correctamente');
             closeModal();
-            fetch('mesas_index.php')
-                .then(res => res.text())
-                .then(html => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    const newTable = doc.querySelector('table');
-                    document.querySelector('table').replaceWith(newTable);
-                });
+            loadSection('mesas/mesas_index.php'); // recargar tabla dinámica
         } else {
             alert('Error al guardar la mesa');
         }

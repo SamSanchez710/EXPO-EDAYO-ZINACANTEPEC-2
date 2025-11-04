@@ -29,7 +29,7 @@ $filtros = $data['filtros'];
 
 <!-- Filtros -->
 <div class="filtro">
-    <form method="get" action="">
+    <form id="filtroForm" method="get" action="">
         <label>Taller:</label>
         <select name="taller_id">
             <option value="">Todos</option>
@@ -49,8 +49,8 @@ $filtros = $data['filtros'];
         <label>Buscar:</label>
         <input type="text" name="search" value="<?= htmlspecialchars($filtros['search'] ?? '') ?>" placeholder="Nombre, Apellido o Email">
 
-        <button type="submit">Filtrar</button>
-        <a href="index.php"><button type="button">Limpiar</button></a>
+        <button type="button" id="filtrarBtn">Filtrar</button>
+        <button type="button" id="limpiarBtn">Limpiar</button>
     </form>
 </div>
 
@@ -86,7 +86,7 @@ $filtros = $data['filtros'];
 </div>
 
 <!-- Tabla de inscripciones -->
-<table>
+<table id="tablaInscripciones">
     <thead>
         <tr>
             <th>ID</th>
@@ -124,31 +124,105 @@ $filtros = $data['filtros'];
 </table>
 
 <script>
-function toggleExportMenu(){
-    const menu = document.getElementById('exportMenu');
-    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
-}
+(() => {
+  // Detectar si estamos dentro del admin o se abrió directo
+  const root = document.getElementById('dynamicSection') || document;
 
-function showFilter(tipo){
-    document.getElementById('filterTaller').style.display = tipo==='taller' ? 'block' : 'none';
-    document.getElementById('filterMesa').style.display = tipo==='mesa' ? 'block' : 'none';
-}
+  /* =====================
+     EXPORTAR A EXCEL
+  ====================== */
+  window.toggleExportMenu = function () {
+    const menu = root.querySelector('#exportMenu');
+    if (menu) {
+      menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    }
+  };
 
-function exportExcel(tipo){
-    let url = 'export_excel.php?tipo='+tipo;
-    if(tipo==='taller'){
-        const taller = document.getElementById('tallerSelect').value;
-        if(taller) url += '&taller=' + encodeURIComponent(taller);
-        else { alert('Selecciona un taller'); return; }
+  window.showFilter = function (tipo) {
+    const fT = root.querySelector('#filterTaller');
+    const fM = root.querySelector('#filterMesa');
+    if (fT) fT.style.display = tipo === 'taller' ? 'block' : 'none';
+    if (fM) fM.style.display = tipo === 'mesa' ? 'block' : 'none';
+  };
+
+  window.exportExcel = function (tipo) {
+    let url = 'inscripciones/export_excel.php?tipo=' + encodeURIComponent(tipo);
+
+    if (tipo === 'taller') {
+      const taller = root.querySelector('#tallerSelect')?.value || '';
+      if (!taller) {
+        alert('Selecciona un taller antes de exportar.');
+        return;
+      }
+      url += '&taller=' + encodeURIComponent(taller);
     }
-    if(tipo==='mesa'){
-        const mesa = document.getElementById('mesaSelect').value;
-        if(mesa) url += '&mesa=' + encodeURIComponent(mesa);
-        else { alert('Selecciona una mesa'); return; }
+
+    if (tipo === 'mesa') {
+      const mesa = root.querySelector('#mesaSelect')?.value || '';
+      if (!mesa) {
+        alert('Selecciona una mesa antes de exportar.');
+        return;
+      }
+      url += '&mesa=' + encodeURIComponent(mesa);
     }
+
+    // Abrir descarga
     window.location.href = url;
-}
+  };
+
+  /* =====================
+     FILTROS (AJAX)
+  ====================== */
+  function aplicarFiltro() {
+    const form = root.querySelector('#filtroForm');
+    if (!form) return;
+
+    const formData = new FormData(form);
+    const params = new URLSearchParams(formData).toString();
+
+    // Mostrar animación mientras carga
+    const tabla = root.querySelector('#tablaInscripciones');
+    if (tabla) tabla.innerHTML = '<p style="text-align:center;">Cargando...</p>';
+
+    fetch('inscripciones/index.php?' + params, {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Error al filtrar');
+        return res.text();
+      })
+      .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const nuevaTabla = doc.querySelector('#tablaInscripciones');
+        if (tabla && nuevaTabla) tabla.innerHTML = nuevaTabla.innerHTML;
+      })
+      .catch(err => {
+        if (tabla) tabla.innerHTML = `<p style="color:red;">Error: ${err.message}</p>`;
+      });
+  }
+
+  /* =====================
+     LIMPIAR FILTROS
+  ====================== */
+  function limpiarFiltros() {
+    const form = root.querySelector('#filtroForm');
+    if (form) form.reset();
+    aplicarFiltro();
+  }
+
+  /* =====================
+     EVENTOS
+  ====================== */
+  const btnFiltrar = root.querySelector('#filtrarBtn');
+  const btnLimpiar = root.querySelector('#limpiarBtn');
+
+  if (btnFiltrar) btnFiltrar.addEventListener('click', aplicarFiltro);
+  if (btnLimpiar) btnLimpiar.addEventListener('click', limpiarFiltros);
+
+})();
 </script>
+
 
 </body>
 </html>

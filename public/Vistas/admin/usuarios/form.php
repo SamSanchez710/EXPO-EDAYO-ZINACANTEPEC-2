@@ -4,11 +4,11 @@ require_once __DIR__ . '/../../../../app/controllers/UserController.php';
 
 $controller = new UserController();
 
-// Verificar si se edita
+// Editar
 $id = isset($_GET['id']) ? intval($_GET['id']) : null;
 $usuario = $id ? $controller->get($id) : null;
 
-// Si es petición AJAX para guardar
+// Guardar vía AJAX
 if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax']) && $_POST['ajax'] == 1){
     $data = [
         'nombre' => $_POST['nombre'],
@@ -85,18 +85,10 @@ document.getElementById('userForm').addEventListener('submit', function(e){
         if(data.status === 'success'){
             alert('Usuario guardado correctamente');
             closeModal();
-            fetch('index.php?tipo=<?= $_GET['tipo'] ?? 'all' ?>')
-                .then(res => res.text())
-                .then(html => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    const newTable = doc.querySelector('table');
-                    document.querySelector('table').replaceWith(newTable);
-                });
+            loadSection('usuarios/index.php'); // recargar tabla
         } else {
             alert('Error al guardar el usuario');
         }
     });
 });
 </script>
-

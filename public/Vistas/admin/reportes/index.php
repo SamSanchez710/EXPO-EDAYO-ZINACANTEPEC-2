@@ -27,18 +27,25 @@ $filtro_fecha = $data['filtro_fecha'];
 <body>
 <h1>Reportes de Inscripciones</h1>
 
+<!-- FILTROS -->
 <div class="filtro">
-    <form method="get" action="">
+    <form id="filtroForm" method="get" action="">
         <label>Seleccionar fecha:</label>
         <input type="date" name="fecha" value="<?= $filtro_fecha ?? '' ?>">
-        <button type="submit">Filtrar por fecha</button>
 
-        <?php if($filtro_fecha): ?>
-            <a href="export_excel.php?fecha=<?= $filtro_fecha ?>"><button type="button">Descargar Excel</button></a>
+        <button type="button" id="filtrarBtn">Filtrar</button>
+        <button type="button" id="limpiarBtn">Limpiar</button>
+
+        <?php if ($filtro_fecha): ?>
+            <button type="button" id="descargarBtn">Descargar Excel</button>
+        <?php else: ?>
+            <button type="button" id="descargarBtn">Descargar Todo</button>
         <?php endif; ?>
     </form>
 </div>
 
+<!-- ESTADÍSTICAS -->
+<div id="contenedorEstadisticas">
 <?php if($estadisticas): ?>
 <div class="estadisticas">
     <strong>Total inscritos:</strong> <?= $estadisticas['total_inscritos'] ?><br>
@@ -46,7 +53,10 @@ $filtro_fecha = $data['filtro_fecha'];
     <strong>Mesas de trabajo activas:</strong> <?= $estadisticas['total_mesas'] ?><br>
 </div>
 <?php endif; ?>
+</div>
 
+<!-- TABLA -->
+<div id="tablaReportes">
 <table>
     <thead>
         <tr>
@@ -83,6 +93,67 @@ $filtro_fecha = $data['filtro_fecha'];
         <?php endif; ?>
     </tbody>
 </table>
+</div>
+
+<script>
+(() => {
+  const root = document.getElementById('dynamicSection') || document;
+
+  function aplicarFiltro() {
+    const form = root.querySelector('#filtroForm');
+    if (!form) return;
+
+    const formData = new FormData(form);
+    const params = new URLSearchParams(formData).toString();
+
+    const tabla = root.querySelector('#tablaReportes');
+    const contEstad = root.querySelector('#contenedorEstadisticas');
+
+    if (tabla) tabla.innerHTML = '<p style="text-align:center;">Cargando...</p>';
+
+    fetch('reportes/index.php?' + params, {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(res => {
+      if (!res.ok) throw new Error('Error al cargar reportes');
+      return res.text();
+    })
+    .then(html => {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      const nuevaTabla = doc.querySelector('#tablaReportes');
+      const nuevasEst = doc.querySelector('#contenedorEstadisticas');
+
+      if (tabla && nuevaTabla) tabla.innerHTML = nuevaTabla.innerHTML;
+      if (contEstad && nuevasEst) contEstad.innerHTML = nuevasEst.innerHTML;
+    })
+    .catch(err => {
+      if (tabla) tabla.innerHTML = `<p style="color:red;">Error: ${err.message}</p>`;
+    });
+  }
+
+  function limpiarFiltros() {
+    const form = root.querySelector('#filtroForm');
+    if (form) form.reset();
+    aplicarFiltro();
+  }
+
+  function descargarExcel() {
+    const fecha = root.querySelector('[name="fecha"]').value;
+    let url = 'reportes/export_excel.php';
+    if (fecha) url += '?fecha=' + encodeURIComponent(fecha);
+    window.location.href = url;
+  }
+
+  const btnFiltrar = root.querySelector('#filtrarBtn');
+  const btnLimpiar = root.querySelector('#limpiarBtn');
+  const btnDescargar = root.querySelector('#descargarBtn');
+
+  if (btnFiltrar) btnFiltrar.addEventListener('click', aplicarFiltro);
+  if (btnLimpiar) btnLimpiar.addEventListener('click', limpiarFiltros);
+  if (btnDescargar) btnDescargar.addEventListener('click', descargarExcel);
+})();
+</script>
 
 </body>
 </html>
