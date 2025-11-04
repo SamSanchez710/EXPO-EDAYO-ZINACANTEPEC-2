@@ -58,9 +58,10 @@ session_start();
         <i class="fas fa-bell" style="color: #882035; font-size: 1.2em; cursor: pointer;"></i>
         <span class="notification-badge">3</span>
       </div>
-      <a href="../../../app/controllers/logout.php" class="login-btn">
-        <i class="fas fa-sign-out-alt"></i> Cerrar sesión
-      </a>
+     <a href="../../../app/controllers/logout.php" class="login-btn">
+    <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+</a>
+
     </div>
   </header>
 
