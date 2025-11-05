@@ -82,16 +82,16 @@ if (isset($_SESSION['user_id'])) {
 
   <!-- Contenido Principal -->
   <main class="main-content">
-    <section id="dashboard" class="active-section">
-      <h1 class="titulo-admin">Dashboard de Administración</h1>
-      <p>Bienvenido al panel de administración.</p>
-    </section>
+  <!-- Puedes eliminar esta parte si lo cargas dinámicamente -->
+  <!-- <section id="dashboard" class="active-section">
+    <h1 class="titulo-admin">Dashboard de Administración</h1>
+    <p>Bienvenido al panel de administración.</p>
+  </section> -->
 
-    <!-- Contenedor dinámico de CRUDs -->
-    <section id="dynamicSection" style="display:block;">
-      <p>Selecciona una sección del menú para mostrar su contenido.</p>
-    </section>
-  </main>
+  <!-- Contenedor dinámico de CRUDs -->
+  <section id="dynamicSection" style="display:block;"></section>
+</main>
+
 
   <!-- Modal global -->
   <div id="modalOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:9999;">
@@ -363,6 +363,26 @@ if (isset($_SESSION['user_id'])) {
       })
       .catch(() => alert('Error al subir la foto'));
   }
+
+// =============================
+// ✅ Cargar Dashboard por defecto al iniciar
+// =============================
+document.addEventListener('DOMContentLoaded', function () {
+  console.log('[init] Cargando Dashboard por defecto...');
+  loadCRUD('dashboard/index.php');
+
+  // Marcar el link de Dashboard como activo (opcional)
+  const dashboardLink = document.querySelector('.nav-link[data-section="dashboard"]');
+  if (dashboardLink) {
+    dashboardLink.classList.add('active');
+  }
+
+  // Ocultar las demás secciones estáticas
+  const staticSections = document.querySelectorAll('main > section:not(#dynamicSection)');
+  staticSections.forEach(s => s.style.display = 'none');
+});
+
+
 </script>
 
 

@@ -9,17 +9,17 @@ class DashboardController {
     }
 
     public function index() {
-    return [
-        'totalUsuarios' => $this->model->totalUsuarios(),
-        'talleresActivos' => $this->model->talleresActivos(),
-        'inscripcionesHoy' => $this->model->inscripcionesHoy(),
-        'tasaCompletamiento' => $this->model->tasaCompletamiento(),
-        'inscripcionesPorTaller' => $this->model->inscripcionesPorTaller(),
-        'actividadReciente' => $this->model->actividadReciente(),
-        'topTalleres' => $this->model->topTalleres(),
-        'mesasPopulares' => $this->model->mesasPopulares(),
-        'ultimasInscripciones' => $this->model->ultimasInscripciones()
-    ];
+        return [
+            'totalUsuarios' => $this->model->totalUsuarios(),
+            'talleresActivos' => $this->model->talleresActivos(),
+            'inscripcionesHoy' => $this->model->inscripcionesHoy(),
+            'tasaCompletamiento' => $this->model->tasaCompletamiento(),
+            'inscripcionesPorTaller' => $this->model->inscripcionesPorTaller(),
+            'actividadReciente' => $this->model->actividadReciente(7),
+            'topTalleres' => $this->model->topTalleres(5),
+            'mesasPopulares' => $this->model->mesasPopulares(5),
+            'ultimasInscripciones' => $this->model->ultimasInscripciones(5),
+        ];
+    }
 }
 
-}
