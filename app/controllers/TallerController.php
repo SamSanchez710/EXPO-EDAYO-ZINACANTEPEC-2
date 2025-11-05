@@ -16,12 +16,12 @@ class TallerController {
         return $this->model->getById($id);
     }
 
-    public function create($data, $mesas) {
-        return $this->model->create($data, $mesas);
+    public function create($data) {
+        return $this->model->create($data);
     }
 
-    public function update($id, $data, $mesas) {
-        return $this->model->update($id, $data, $mesas);
+    public function update($id, $data) {
+        return $this->model->update($id, $data);
     }
 
     public function delete($id) {
