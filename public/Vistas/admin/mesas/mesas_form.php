@@ -61,24 +61,3 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax']) && $_POST['aja
     <button type="button" onclick="closeModal()">Cancelar</button>
 </form>
 
-<script>
-document.getElementById('mesaForm').addEventListener('submit', function(e){
-    e.preventDefault();
-    const formData = new FormData(this);
-
-    fetch('mesas_form.php<?= $mesa ? "?id=".$mesa['id'] : "" ?>', {
-        method: 'POST',
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-        if(data.status === 'success'){
-            alert('Mesa guardada correctamente');
-            closeModal();
-            loadSection('mesas/mesas_index.php'); // recargar tabla dinámica
-        } else {
-            alert('Error al guardar la mesa');
-        }
-    });
-});
-</script>

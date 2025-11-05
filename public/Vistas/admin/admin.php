@@ -103,172 +103,268 @@ if (isset($_SESSION['user_id'])) {
   </footer>
 
   <script src="../../JavaScript/admin.js"></script>
-  <script>
-    // Sidebar móvil
-    function toggleSidebar() {
-      document.getElementById('sidebar').classList.toggle('active');
-    }
+  
+<script>
+  // =============================
+  // Sidebar móvil
+  // =============================
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('active');
+  }
 
-    // Manejo de secciones
-    const navLinks = document.querySelectorAll('.nav-link');
-    const dynamicSection = document.getElementById('dynamicSection');
-    const staticSections = document.querySelectorAll('main > section:not(#dynamicSection)');
+  // =============================
+  // Variables globales
+  // =============================
+  const navLinks = document.querySelectorAll('.nav-link');
+  const dynamicSection = document.getElementById('dynamicSection');
+  const staticSections = document.querySelectorAll('main > section:not(#dynamicSection)');
+  let currentSection = ''; // guarda la última vista cargada (para filtros o secciones)
 
-    navLinks.forEach(link => {
-      link.addEventListener('click', e => {
-        e.preventDefault();
-        const sectionId = link.getAttribute('data-section');
+  // =============================
+  // Navegación de secciones
+  // =============================
+  navLinks.forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const sectionId = link.getAttribute('data-section');
 
-        // Activar link
-        navLinks.forEach(l => l.classList.remove('active'));
-        link.classList.add('active');
+      // Activar el link seleccionado
+      navLinks.forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
 
-        // Ocultar secciones estáticas
-        staticSections.forEach(s => s.style.display = 'none');
+      // Ocultar secciones estáticas
+      staticSections.forEach(s => s.style.display = 'none');
 
-        // Cargar CRUD correspondiente
-        switch(sectionId) {
-          case 'usuarios':
-            loadCRUD('usuarios/index.php');
-            break;
-          case 'talleres':
-            loadCRUD('talleres/index.php');
-            break;
-          case 'inscripciones':
-            loadCRUD('inscripciones/index.php');
-            break;
-          case 'mesas':
-            loadCRUD('mesas/mesas_index.php');
-            break;
-          case 'reportes':
-            loadCRUD('reportes/index.php');
-            break;
-          case 'dashboard':
-            loadCRUD('dashboard/index.php');
-            break;
-          case 'configuracion':
-            loadCRUD('configuracion/index.php');
-            break;
-          default:
-            dynamicSection.innerHTML = `<p>Bienvenido al Dashboard</p>`;
-        }
-      });
+      // Cargar la sección correspondiente
+      switch (sectionId) {
+        case 'usuarios':
+          loadCRUD('usuarios/index.php');
+          break;
+        case 'talleres':
+          loadCRUD('talleres/index.php');
+          break;
+        case 'inscripciones':
+          loadCRUD('inscripciones/index.php');
+          break;
+        case 'mesas':
+          loadCRUD('mesas/mesas_index.php');
+          break;
+        case 'reportes':
+          loadCRUD('reportes/index.php');
+          break;
+        case 'dashboard':
+          loadCRUD('dashboard/index.php');
+          break;
+        case 'configuracion':
+          loadCRUD('configuracion/index.php');
+          break;
+        default:
+          dynamicSection.innerHTML = `<p>Bienvenido al Dashboard</p>`;
+      }
     });
+  });
 
-    // Función para cargar CRUD en sección dinámica
-function loadCRUD(path) {
-  fetch(path)
-    .then(res => res.text())
-    .then(html => {
-      dynamicSection.style.display = 'block';
-      dynamicSection.innerHTML = html;
+  // =============================
+  // ✅ Función para cargar secciones dinámicas (respetando filtros)
+  // =============================
+  function loadSection(path) {
+    currentSection = path;
+    const url = path + (path.includes('?') ? '&' : '?') + 't=' + Date.now();
+    console.log('[loadSection] cargando:', url);
 
-      // 🔧 Ejecutar los scripts que vienen dentro del HTML cargado
-      const scripts = dynamicSection.querySelectorAll("script");
-      scripts.forEach(oldScript => {
-        const newScript = document.createElement("script");
-        if (oldScript.src) {
-          // si el script tiene src (archivo externo)
-          newScript.src = oldScript.src;
-        } else {
-          // si el script está embebido
-          newScript.textContent = oldScript.textContent;
-        }
-        document.body.appendChild(newScript);
+    dynamicSection.innerHTML = `<p style="text-align:center;margin:20px;">Cargando...</p>`;
+
+    fetch(url, { cache: 'no-store' })
+      .then(res => res.text())
+      .then(html => {
+        dynamicSection.style.display = 'block';
+        dynamicSection.innerHTML = html;
+
+        // Ejecutar los scripts embebidos dentro del HTML cargado
+        const scripts = dynamicSection.querySelectorAll("script");
+        scripts.forEach(oldScript => {
+          const newScript = document.createElement("script");
+          if (oldScript.src) newScript.src = oldScript.src;
+          else newScript.textContent = oldScript.textContent;
+          document.body.appendChild(newScript);
+        });
+
+        console.log('[loadSection] contenido inyectado correctamente.');
+      })
+      .catch(err => {
+        console.error('[loadSection] error:', err);
+        dynamicSection.innerHTML = `<p style="color:red;">Error cargando sección: ${err}</p>`;
       });
-    })
-    .catch(err => {
-      dynamicSection.innerHTML = `<p style="color:red;">Error cargando sección: ${err}</p>`;
-    });
-}
+  }
 
+  // =============================
+  // ✅ Función general para CRUD dinámicos
+  // =============================
+  function loadCRUD(path) {
+    const url = path + (path.includes('?') ? '&' : '?') + 't=' + Date.now();
+    currentSection = path;
+    console.log('[loadCRUD] cargando:', url);
 
-    // Modal global
-    function openModal(url) {
+    dynamicSection.innerHTML = `<p style="text-align:center;margin:20px;">Cargando...</p>`;
+
+    fetch(url, { cache: 'no-store' })
+      .then(res => res.text())
+      .then(html => {
+        dynamicSection.style.display = 'block';
+        dynamicSection.innerHTML = html;
+
+        // Ejecutar scripts embebidos (por ejemplo los que traen los formularios o tablas)
+        const scripts = Array.from(dynamicSection.querySelectorAll("script"));
+        scripts.forEach(oldScript => {
+          const newScript = document.createElement("script");
+          if (oldScript.src) newScript.src = oldScript.src;
+          else newScript.textContent = oldScript.textContent;
+          dynamicSection.appendChild(newScript);
+        });
+
+        console.log('[loadCRUD] contenido inyectado para:', path);
+      })
+      .catch(err => {
+        console.error('[loadCRUD] error cargando', path, err);
+        dynamicSection.innerHTML = `<p style="color:red;">Error cargando sección: ${err}</p>`;
+      });
+  }
+
+  // =============================
+  // ✅ Modal global
+  // =============================
+  function openModal(url) {
     const overlay = document.getElementById('modalOverlay');
     const content = document.getElementById('modalContent');
 
     fetch(url)
-    .then(res => res.text())
-    .then(html => {
+      .then(res => res.text())
+      .then(html => {
         content.innerHTML = html;
         overlay.style.display = 'flex';
 
-        // 🔹 Después de insertar el HTML, asignar el listener del input
+        // Listener de preview (usuarios/talleres)
         const fotoInput = content.querySelector('#fotoInput');
         const previewFoto = content.querySelector('#previewFoto');
-        if(fotoInput && previewFoto){
-            fotoInput.addEventListener('change', function() {
-                const file = this.files[0];
-                if(file){
-                    const reader = new FileReader();
-                    reader.onload = function(e){
-                        previewFoto.src = e.target.result;
-                        previewFoto.style.display = 'block';
+        const imagenInput = content.querySelector('#imagenInput');
+        const previewImagen = content.querySelector('#previewImagen');
+
+        if (fotoInput && previewFoto) {
+          fotoInput.addEventListener('change', function () {
+            const file = this.files[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onload = e => {
+                previewFoto.src = e.target.result;
+                previewFoto.style.display = 'block';
+              };
+              reader.readAsDataURL(file);
+            } else {
+              previewFoto.src = '';
+              previewFoto.style.display = 'none';
+            }
+          });
+        }
+
+        if (imagenInput && previewImagen) {
+          imagenInput.addEventListener('change', function () {
+            const file = this.files[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onload = e => {
+                previewImagen.src = e.target.result;
+                previewImagen.style.display = 'block';
+              };
+              reader.readAsDataURL(file);
+            } else {
+              previewImagen.src = '';
+              previewImagen.style.display = 'none';
+            }
+          });
+        }
+
+        // Listener para submit AJAX del modal
+        const form = content.querySelector('form');
+        if (form) {
+          console.log('[openModal] attach submit listener to form id=', form.id, 'for url=', url);
+          form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            fetch(url, { method: 'POST', body: formData })
+              .then(res => res.json())
+              .then(data => {
+                if (data.status === 'success') {
+                  console.log('[openModal] success para form:', form.id);
+                  alert('Guardado correctamente');
+                  closeModal();
+
+                  // Pequeño retardo para asegurar cierre de modal
+                  setTimeout(() => {
+                    if (form.id === 'userForm') {
+                      loadCRUD('usuarios/index.php');
+                    } else if (form.id === 'tallerForm') {
+                      loadCRUD('talleres/index.php');
+                    } else if (form.id === 'mesaForm') {
+                      loadCRUD('mesas/mesas_index.php'); // ✅ recarga tabla mesas
+                    } else if (currentSection) {
+                      loadSection(currentSection); // fallback: recarga la sección actual
+                    } else {
+                      loadCRUD('dashboard/index.php');
                     }
-                    reader.readAsDataURL(file);
+                  }, 150);
                 } else {
-                    previewFoto.src = '';
-                    previewFoto.style.display = 'none';
+                  alert('Error al guardar');
+                  console.warn('[openModal] respuesta con error:', data);
                 }
-            });
+              })
+              .catch(err => alert('Error AJAX: ' + err));
+          });
         }
-
-        // 🔹 También puedes asignar aquí el listener de submit AJAX si quieres
-        const userForm = content.querySelector('#userForm');
-        if(userForm){
-            userForm.addEventListener('submit', function(e){
-                e.preventDefault();
-                const formData = new FormData(this);
-                fetch(url, { method:'POST', body: formData })
-                  .then(res => res.json())
-                  .then(data => {
-                      if(data.status==='success'){
-                          alert('Usuario guardado correctamente');
-                          closeModal();
-                          loadSection('usuarios/index.php');
-                      } else alert('Error al guardar el usuario');
-                  });
-            });
-        }
-
-    })
-    .catch(err => {
+      })
+      .catch(err => {
         content.innerHTML = `<p style="color:red;">Error cargando modal: ${err}</p>`;
         overlay.style.display = 'flex';
-    });
-}
+      });
+  }
 
+  // =============================
+  // ✅ Cerrar modal
+  // =============================
+  function closeModal() {
+    const overlay = document.getElementById('modalOverlay');
+    overlay.style.display = 'none';
+    document.getElementById('modalContent').innerHTML = '';
+  }
 
-    function closeModal() {
-      const overlay = document.getElementById('modalOverlay');
-      overlay.style.display = 'none';
-      document.getElementById('modalContent').innerHTML = '';
-    }
-
-    function subirAvatar(input) {
+  // =============================
+  // ✅ Subir avatar (configuración)
+  // =============================
+  function subirAvatar(input) {
     const file = input.files[0];
-    if(!file) return;
+    if (!file) return;
 
     const formData = new FormData();
     formData.append('avatar', file);
 
     fetch('../../../app/controllers/ConfiguracionController.php?action=actualizarFotoPerfil', {
-        method: 'POST',
-        body: formData
+      method: 'POST',
+      body: formData
     })
-    .then(res => res.json())
-    .then(r => {
-        if(r.success){
-            alert(r.message);
-            document.getElementById('avatarImg').src = '../../../app/controllers/ConfiguracionController.php?action=foto&t=' + new Date().getTime();
+      .then(res => res.json())
+      .then(r => {
+        if (r.success) {
+          alert(r.message);
+          document.getElementById('avatarImg').src =
+            '../../../app/controllers/ConfiguracionController.php?action=foto&t=' + new Date().getTime();
         } else {
-            alert('Error: ' + r.message);
+          alert('Error: ' + r.message);
         }
-    })
-    .catch(()=>alert('Error al subir la foto'));
-}
+      })
+      .catch(() => alert('Error al subir la foto'));
+  }
+</script>
 
-  </script>
+
 </body>
 </html>

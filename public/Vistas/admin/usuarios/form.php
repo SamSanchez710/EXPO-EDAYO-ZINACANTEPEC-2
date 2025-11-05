@@ -76,48 +76,4 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax']) && $_POST['aja
     <button type="button" onclick="closeModal()">Cancelar</button>
 </form>
 
-<script>
-// Esto se ejecuta una vez que el modal ya insertó este HTML
-(function(){
-    const form = document.getElementById('userForm');
-    const fotoInput = document.getElementById('fotoInput');
-    const previewFoto = document.getElementById('previewFoto');
 
-    // Preview de imagen
-    fotoInput.addEventListener('change', function(){
-        const file = this.files[0];
-        if(file){
-            const reader = new FileReader();
-            reader.onload = function(e){
-                previewFoto.src = e.target.result;
-                previewFoto.style.display = 'block';
-            }
-            reader.readAsDataURL(file);
-        } else {
-            previewFoto.src = '';
-            previewFoto.style.display = 'none';
-        }
-    });
-
-    // Envío vía AJAX
-    form.addEventListener('submit', function(e){
-        e.preventDefault();
-        const formData = new FormData(this);
-        fetch('form.php<?= $usuario ? "?id=".$usuario['id'] : "" ?>', {
-            method: 'POST',
-            body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
-            if(data.status==='success'){
-                alert('Usuario guardado correctamente');
-                closeModal();
-                loadSection('usuarios/index.php');
-            } else {
-                alert('Error al guardar el usuario');
-            }
-        })
-        .catch(err => alert('Error AJAX: '+err));
-    });
-})();
-</script>
