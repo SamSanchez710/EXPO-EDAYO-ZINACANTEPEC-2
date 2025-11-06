@@ -273,8 +273,104 @@ $talleres = $controller->index();
     </div>
 </footer>
 
+<!-- Modal dinámico -->
+<div id="modalOverlay" class="modal-overlay" style="display:none;">
+  <div class="modal-content" id="modalBody"></div>
+</div>
+
+
 <script src="../../JavaScript/carrusel_talleres.js"></script>
 <script src="../../JavaScript/preguntas_usu.js"></script>
+
+<script>
+/**
+ * reemplaza la función openModal anterior por esta
+ * usage: openModal(tallerId)
+ */
+function openModal(tallerId) {
+    fetch(`modal_inscripcion.php?taller_id=${tallerId}`)
+    .then(res => {
+        if (!res.ok) throw new Error('Error cargando modal: ' + res.status);
+        return res.text();
+    })
+    .then(html => {
+        // Si ya existe un overlay, elimínalo (evita duplicados)
+        const existing = document.getElementById('modalOverlay');
+        if (existing) existing.remove();
+
+        // Crear overlay
+        const overlay = document.createElement('div');
+        overlay.id = 'modalOverlay';
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.backgroundColor = 'rgba(0,0,0,0.6)';
+        overlay.style.display = 'flex';
+        overlay.style.justifyContent = 'center';
+        overlay.style.alignItems = 'center';
+        overlay.style.zIndex = '9999';
+
+        // Inyectar HTML (modal body)
+        overlay.innerHTML = html;
+        document.body.appendChild(overlay);
+
+        // Agregar listener para cerrar con clic fuera (opcional)
+        overlay.addEventListener('click', function(e){
+            if (e.target === overlay) closeModal();
+        });
+
+        // Buscar formulario y conectar submit por JS
+        const form = overlay.querySelector('#formInscripcion');
+        if (form) {
+            form.addEventListener('submit', function(ev){
+                ev.preventDefault();
+
+                // Construir FormData desde el form (usa los name= para poblar POST)
+                const formData = new FormData(form);
+
+                // Llamada a tu controlador PHP (que actualmente espera $_POST)
+                fetch('../../../app/controllers/InscripcionController.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(r => r.json())
+                .then(resp => {
+                    if (resp.status === 'success') {
+                        // alerta en la página (puedes reemplazar por tu alert estilizado)
+                        alert(resp.message || 'Inscripción guardada correctamente');
+                        // cerrar modal
+                        closeModal();
+                        // opcional: recargar la página para que usuario vea cambios
+                        // location.reload();
+                    } else {
+                        alert(resp.message || 'Error al guardar la inscripción');
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Error al procesar la inscripción');
+                });
+            });
+        } else {
+            console.warn('formInscripcion no encontrado dentro del modal');
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert('No se pudo abrir el formulario. Revisa la consola.');
+    });
+}
+
+/** cerrar modal */
+function closeModal(){
+    const overlay = document.getElementById('modalOverlay');
+    if (overlay) overlay.remove();
+}
+</script>
+
+
 
 
 </body>
