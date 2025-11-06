@@ -12,7 +12,7 @@ class InscripcionController {
         header('Content-Type: application/json');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $data = [
+           $data = [
                 'usuario_id' => $_POST['usuario_id'] ?? null,
                 'nombre' => $_POST['nombre'] ?? '',
                 'apellido_paterno' => $_POST['apellido_paterno'] ?? '',
@@ -28,14 +28,20 @@ class InscripcionController {
                 'taller_id' => $_POST['taller_id'] ?? null
             ];
 
-            $ok = $this->model->guardarInscripcion($data);
+            $id = $this->model->guardarInscripcion($data);
 
-            echo json_encode([
-                'status' => $ok ? 'success' : 'error',
-                'message' => $ok 
-                    ? '¡Inscripción realizada correctamente!' 
-                    : 'Error al registrar la inscripción.'
-            ]);
+            if ($id !== false) {
+                // Generar folio (no es necesario guardarlo en DB, pero puedes hacerlo)
+                $folio = 'EDAYO-' . date('Y') . '-' . str_pad($id, 5, '0', STR_PAD_LEFT);
+                echo json_encode([
+                    'status' => 'success',
+                    'message' => 'Inscripción registrada correctamente.',
+                    'id_inscripcion' => $id,
+                    'folio' => $folio
+                ]);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'No se pudo registrar la inscripción.']);
+            }
             exit;
         }
 
@@ -43,7 +49,7 @@ class InscripcionController {
     }
 }
 
-// ✅ Permitir ejecución directa
+// Ejecución directa segura
 if (basename(__FILE__) == basename($_SERVER['PHP_SELF'])) {
     $controller = new InscripcionController();
     $controller->guardar();

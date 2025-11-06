@@ -283,10 +283,6 @@ $talleres = $controller->index();
 <script src="../../JavaScript/preguntas_usu.js"></script>
 
 <script>
-/**
- * reemplaza la función openModal anterior por esta
- * usage: openModal(tallerId)
- */
 function openModal(tallerId) {
     fetch(`modal_inscripcion.php?taller_id=${tallerId}`)
     .then(res => {
@@ -294,11 +290,9 @@ function openModal(tallerId) {
         return res.text();
     })
     .then(html => {
-        // Si ya existe un overlay, elimínalo (evita duplicados)
         const existing = document.getElementById('modalOverlay');
         if (existing) existing.remove();
 
-        // Crear overlay
         const overlay = document.createElement('div');
         overlay.id = 'modalOverlay';
         overlay.style.position = 'fixed';
@@ -311,26 +305,20 @@ function openModal(tallerId) {
         overlay.style.justifyContent = 'center';
         overlay.style.alignItems = 'center';
         overlay.style.zIndex = '9999';
-
-        // Inyectar HTML (modal body)
         overlay.innerHTML = html;
         document.body.appendChild(overlay);
 
-        // Agregar listener para cerrar con clic fuera (opcional)
         overlay.addEventListener('click', function(e){
             if (e.target === overlay) closeModal();
         });
 
-        // Buscar formulario y conectar submit por JS
         const form = overlay.querySelector('#formInscripcion');
         if (form) {
             form.addEventListener('submit', function(ev){
                 ev.preventDefault();
 
-                // Construir FormData desde el form (usa los name= para poblar POST)
                 const formData = new FormData(form);
 
-                // Llamada a tu controlador PHP (que actualmente espera $_POST)
                 fetch('../../../app/controllers/InscripcionController.php', {
                     method: 'POST',
                     body: formData
@@ -338,12 +326,16 @@ function openModal(tallerId) {
                 .then(r => r.json())
                 .then(resp => {
                     if (resp.status === 'success') {
-                        // alerta en la página (puedes reemplazar por tu alert estilizado)
                         alert(resp.message || 'Inscripción guardada correctamente');
-                        // cerrar modal
+                        
+                        // === NUEVO ===
+                        if (resp.id_inscripcion) {
+                            // Abrir el comprobante en una nueva pestaña
+                            const url = `../../../public/descargar_comprobante.php?id=${resp.id_inscripcion}`;
+                            window.open(url, '_blank');
+                        }
+
                         closeModal();
-                        // opcional: recargar la página para que usuario vea cambios
-                        // location.reload();
                     } else {
                         alert(resp.message || 'Error al guardar la inscripción');
                     }
@@ -363,12 +355,12 @@ function openModal(tallerId) {
     });
 }
 
-/** cerrar modal */
 function closeModal(){
     const overlay = document.getElementById('modalOverlay');
     if (overlay) overlay.remove();
 }
 </script>
+
 
 
 

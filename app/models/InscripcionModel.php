@@ -9,7 +9,7 @@ class InscripcionModel {
         $this->conn = $database->getConnection();
     }
 
-    // Guardar nueva inscripción
+    // Guardar nueva inscripción: devuelve id insertado o false
     public function guardarInscripcion($data) {
         $stmt = $this->conn->prepare("
             INSERT INTO inscripciones (
@@ -26,24 +26,29 @@ class InscripcionModel {
             )
         ");
 
-        $stmt->bindParam(':usuario_id', $data['usuario_id']);
-        $stmt->bindParam(':nombre', $data['nombre']);
-        $stmt->bindParam(':apellido_paterno', $data['apellido_paterno']);
-        $stmt->bindParam(':apellido_materno', $data['apellido_materno']);
-        $stmt->bindParam(':edad', $data['edad']);
-        $stmt->bindParam(':municipio', $data['municipio']);
-        $stmt->bindParam(':email', $data['email']);
-        $stmt->bindParam(':telefono', $data['telefono']);
-        $stmt->bindParam(':taller_seleccionado', $data['taller_seleccionado']);
-        $stmt->bindParam(':mesa_trabajo', $data['mesa_trabajo']);
-        $stmt->bindParam(':aviso_privacidad', $data['aviso_privacidad']);
-        $stmt->bindParam(':confirmacion_asistencia', $data['confirmacion_asistencia']);
-        $stmt->bindParam(':taller_id', $data['taller_id']);
+        // Bind (usar null cuando sea necesario)
+        $stmt->bindValue(':usuario_id', $data['usuario_id'] !== '' ? $data['usuario_id'] : null, PDO::PARAM_INT);
+        $stmt->bindValue(':nombre', $data['nombre']);
+        $stmt->bindValue(':apellido_paterno', $data['apellido_paterno']);
+        $stmt->bindValue(':apellido_materno', $data['apellido_materno']);
+        $stmt->bindValue(':edad', $data['edad'] !== '' ? $data['edad'] : null, PDO::PARAM_INT);
+        $stmt->bindValue(':municipio', $data['municipio']);
+        $stmt->bindValue(':email', $data['email']);
+        $stmt->bindValue(':telefono', $data['telefono']);
+        $stmt->bindValue(':taller_seleccionado', $data['taller_seleccionado']);
+        $stmt->bindValue(':mesa_trabajo', $data['mesa_trabajo']);
+        $stmt->bindValue(':aviso_privacidad', $data['aviso_privacidad'], PDO::PARAM_INT);
+        $stmt->bindValue(':confirmacion_asistencia', $data['confirmacion_asistencia'], PDO::PARAM_INT);
+        $stmt->bindValue(':taller_id', $data['taller_id'] !== '' ? $data['taller_id'] : null, PDO::PARAM_INT);
 
-        return $stmt->execute();
+        $ok = $stmt->execute();
+        if ($ok) {
+            return (int)$this->conn->lastInsertId();
+        }
+        return false;
     }
 
-    // Obtener mesas disponibles de un taller
+    // Obtener mesas disponibles de un taller (ya lo tienes)
     public function getMesasDisponibles($taller_id) {
         $stmt = $this->conn->prepare("
             SELECT id, nombre_mesa 
