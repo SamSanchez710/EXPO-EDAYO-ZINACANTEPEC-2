@@ -31,8 +31,18 @@ class InscripcionController {
             $id = $this->model->guardarInscripcion($data);
 
             if ($id !== false) {
-                // Generar folio (no es necesario guardarlo en DB, pero puedes hacerlo)
-                $folio = 'EDAYO-' . date('Y') . '-' . str_pad($id, 5, '0', STR_PAD_LEFT);
+                // ----------------------------
+                // Guardar folio en la BD
+                // ----------------------------
+                $folioExistente = $this->model->obtenerFolio($id);
+
+                if (empty($folioExistente)) {
+                    $folio = 'EDAYO-' . date('Y') . '-' . str_pad($id, 5, '0', STR_PAD_LEFT);
+                    $this->model->guardarFolio($id, $folio);
+                } else {
+                    $folio = $folioExistente;
+                }
+
                 echo json_encode([
                     'status' => 'success',
                     'message' => 'Inscripción registrada correctamente.',

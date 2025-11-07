@@ -290,9 +290,11 @@ function openModal(tallerId) {
         return res.text();
     })
     .then(html => {
+        // Eliminar overlay previo si existe
         const existing = document.getElementById('modalOverlay');
         if (existing) existing.remove();
 
+        // Crear overlay
         const overlay = document.createElement('div');
         overlay.id = 'modalOverlay';
         overlay.style.position = 'fixed';
@@ -308,6 +310,7 @@ function openModal(tallerId) {
         overlay.innerHTML = html;
         document.body.appendChild(overlay);
 
+        // Cerrar modal al click fuera del contenido
         overlay.addEventListener('click', function(e){
             if (e.target === overlay) closeModal();
         });
@@ -327,11 +330,11 @@ function openModal(tallerId) {
                 .then(resp => {
                     if (resp.status === 'success') {
                         alert(resp.message || 'Inscripción guardada correctamente');
-                        
-                        // === NUEVO ===
-                        if (resp.id_inscripcion) {
-                            // Abrir el comprobante en una nueva pestaña
+
+                        // === NUEVO: Abrir PDF con folio exacto ===
+                        if (resp.id_inscripcion && resp.folio) {
                             const url = `../../../public/descargar_comprobante.php?id=${resp.id_inscripcion}`;
+                            // Abrir en nueva pestaña
                             window.open(url, '_blank');
                         }
 
@@ -360,6 +363,7 @@ function closeModal(){
     if (overlay) overlay.remove();
 }
 </script>
+
 
 
 

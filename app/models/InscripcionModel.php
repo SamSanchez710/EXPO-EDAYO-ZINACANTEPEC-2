@@ -26,7 +26,6 @@ class InscripcionModel {
             )
         ");
 
-        // Bind (usar null cuando sea necesario)
         $stmt->bindValue(':usuario_id', $data['usuario_id'] !== '' ? $data['usuario_id'] : null, PDO::PARAM_INT);
         $stmt->bindValue(':nombre', $data['nombre']);
         $stmt->bindValue(':apellido_paterno', $data['apellido_paterno']);
@@ -48,7 +47,7 @@ class InscripcionModel {
         return false;
     }
 
-    // Obtener mesas disponibles de un taller (ya lo tienes)
+    // Obtener mesas disponibles de un taller
     public function getMesasDisponibles($taller_id) {
         $stmt = $this->conn->prepare("
             SELECT id, nombre_mesa 
@@ -58,6 +57,24 @@ class InscripcionModel {
         $stmt->bindParam(':taller_id', $taller_id);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // ----------------------------
+    // NUEVO: Métodos para folio
+    // ----------------------------
+    public function obtenerFolio($id) {
+        $stmt = $this->conn->prepare("SELECT folio FROM inscripciones WHERE id = :id");
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        $res = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $res['folio'] ?? null;
+    }
+
+    public function guardarFolio($id, $folio) {
+        $stmt = $this->conn->prepare("UPDATE inscripciones SET folio = :folio WHERE id = :id");
+        $stmt->bindParam(':folio', $folio, PDO::PARAM_STR);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        return $stmt->execute();
     }
 }
 ?>
