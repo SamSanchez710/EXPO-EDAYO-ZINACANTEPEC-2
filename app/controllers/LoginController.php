@@ -17,28 +17,49 @@ class LoginController {
 
             $user = $this->userModel->getUserByEmail($email);
 
-            if ($user && password_verify($password, $user['password'])) {
+            if ($user) {
+                // Verificar si la contraseña es correcta
+                if (!password_verify($password, $user['password'])) {
+                    echo "<script>
+                        alert('Correo o contraseña incorrectos');
+                        window.history.back();
+                    </script>";
+                    exit;
+                }
+
+                // Verificar si el usuario ha confirmado su correo
+                if ($user['verificado'] != 1) {
+                    echo "<script>
+                        alert('Debes verificar tu correo antes de iniciar sesión');
+                        window.history.back();
+                    </script>";
+                    exit;
+                }
+
+                // Iniciar sesión
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['nombre'] = $user['nombre'];
                 $_SESSION['tipo_usuario'] = $user['tipo_usuario'];
 
+                // Redirigir según tipo de usuario
                 if ($user['tipo_usuario'] === 'admin') {
                     header("Location: ../../public/Vistas/admin/admin.php");
                     exit;
                 } else {
-                    header("Location: ../../public/Vistas/usuario/usuario.php"); // pendiente
+                    header("Location: ../../public/Vistas/usuario/usuario.php");
                     exit;
                 }
+
             } else {
-                // Mostrar alerta sin redirigir ni incluir otra vista
+                // Usuario no encontrado
                 echo "<script>
                     alert('Correo o contraseña incorrectos');
-                    window.history.back(); // vuelve a la página anterior
+                    window.history.back();
                 </script>";
                 exit;
             }
         }
-        // Aquí ya no hacemos include, así el usuario queda en la página actual
+        // No hacer include aquí para que el usuario permanezca en la página actual
     }
 
     // Cerrar sesión

@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . '/../models/User.php';
+require_once __DIR__ . '/../libs/Email.php';
 
 class RegisterController {
     private $userModel;
@@ -11,55 +12,59 @@ class RegisterController {
 
     public function register() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $nombre = $_POST['nombre'] ?? '';
-            $apellido_paterno = $_POST['apellido_paterno'] ?? '';
-            $apellido_materno = $_POST['apellido_materno'] ?? '';
-            $email = $_POST['email'] ?? '';
+
+            $nombre = trim($_POST['nombre'] ?? '');
+            $apellido_paterno = trim($_POST['apellido_paterno'] ?? '');
+            $apellido_materno = trim($_POST['apellido_materno'] ?? '');
+            $email = trim($_POST['email'] ?? '');
             $password = $_POST['password'] ?? '';
             $confirm_password = $_POST['confirm_password'] ?? '';
 
             // Validar contraseñas
-            if($password !== $confirm_password) {
-                $error = "Las contraseñas no coinciden";
-                include __DIR__ . '/../Vistas/register.php';
-                return;
+            if ($password !== $confirm_password) {
+                $_SESSION['alert'] = "Las contraseñas no coinciden";
+                header("Location: ../../public/Vistas/index.php");
+                exit;
             }
 
             // Validar si el correo ya existe
-            if($this->userModel->getUserByEmail($email)) {
-                $error = "El correo ya está registrado";
-                include __DIR__ . '/../Vistas/register.php';
-                return;
+            if ($this->userModel->getUserByEmail($email)) {
+                $_SESSION['alert'] = "El correo ya está registrado";
+                header("Location: ../../public/Vistas/index.php");
+                exit;
             }
 
-            // Hashear contraseña
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+            $token = bin2hex(random_bytes(32)); // Token seguro de 64 caracteres
 
-            // Guardar usuario como tipo 'usuario'
-            if($this->userModel->registerUser($nombre, $apellido_paterno, $apellido_materno, $email, $hashedPassword)) {
-                
-                // Obtener usuario recién creado
-                $user = $this->userModel->getUserByEmail($email);
+            $registered = $this->userModel->registerUserWithToken(
+                $nombre, $apellido_paterno, $apellido_materno, $email, $hashedPassword, $token
+            );
 
-                // Iniciar sesión automáticamente
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['nombre'] = $user['nombre'];
-                $_SESSION['tipo_usuario'] = $user['tipo_usuario'];
+            if(!$registered){
+                $_SESSION['alert'] = "Ocurrió un error al registrar. Intenta de nuevo";
+                header("Location: ../../public/Vistas/index.php");
+                exit;
+            }
 
-                // Redirigir a panel de usuario
-                header("Location: ../../public/Vistas/usuario/usuario.php");
+            $emailSent = Email::sendVerificationEmail($email, $token);
+            if($emailSent){
+                $_SESSION['alert'] = "Registro exitoso. Revisa tu correo y haz clic en 'Verificar correo' para activar tu cuenta.";
+                header("Location: ../../public/Vistas/index.php");
                 exit;
             } else {
-                $error = "Ocurrió un error, intenta de nuevo";
-                include __DIR__ . '/../Vistas/register.php';
+                $_SESSION['alert'] = "No se pudo enviar el correo de verificación. Intenta más tarde.";
+                header("Location: ../../public/Vistas/index.php");
+                exit;
             }
+
         } else {
-            include __DIR__ . '/../Vistas/register.php';
+            header("Location: ../../public/Vistas/index.php");
+            exit;
         }
     }
 }
 
-// Ejecutar controlador
 $controller = new RegisterController();
 $controller->register();
 ?>

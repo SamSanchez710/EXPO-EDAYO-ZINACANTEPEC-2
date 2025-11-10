@@ -1,5 +1,10 @@
 <?php
 session_start();
+$alert = '';
+if(isset($_SESSION['alert'])){
+    $alert = $_SESSION['alert'];
+    unset($_SESSION['alert']); // limpiar la alerta
+}
 require_once __DIR__ . '/../../app/controllers/TalleresInicioController.php';
 
 $controller = new TalleresInicioController();
@@ -361,6 +366,14 @@ function openRegister(){
         }
     });
 }
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function(){
+        <?php if($alert): ?>
+            alert("<?php echo $alert; ?>");
+        <?php endif; ?>
+    });
 </script>
 
 <script src="../JavaScript/carrusel_talleres.js"></script>

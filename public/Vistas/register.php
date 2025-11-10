@@ -12,9 +12,8 @@
 <body>
     <div class="login-container">
         <h2>Registro</h2>
-        
-        <?php if(isset($error)) echo "<p class='error'>$error</p>"; ?>
-        
+
+        <!-- Formulario de registro -->
         <form method="POST" action="../../app/controllers/RegisterController.php">
             <div class="input-group">
                 <div class="input-container">
@@ -22,28 +21,42 @@
                     <input type="text" name="nombre" placeholder="Nombre completo" required>
                 </div>
             </div>
-            
+
+            <div class="input-group">
+                <div class="input-container">
+                    <i class="fas fa-user"></i>
+                    <input type="text" name="apellido_paterno" placeholder="Apellido paterno" required>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <div class="input-container">
+                    <i class="fas fa-user"></i>
+                    <input type="text" name="apellido_materno" placeholder="Apellido materno" required>
+                </div>
+            </div>
+
             <div class="input-group">
                 <div class="input-container">
                     <i class="fas fa-envelope"></i>
                     <input type="email" name="email" placeholder="Correo electrónico" required>
                 </div>
             </div>
-            
+
             <div class="input-group">
                 <div class="input-container">
                     <i class="fas fa-lock"></i>
                     <input type="password" name="password" placeholder="Contraseña" required>
                 </div>
             </div>
-            
+
             <div class="input-group">
                 <div class="input-container">
                     <i class="fas fa-lock"></i>
                     <input type="password" name="confirm_password" placeholder="Confirmar contraseña" required>
                 </div>
             </div>
-            
+
             <div class="input-group">
                 <button type="submit">
                     <span class="btn-text">Registrarse</span>
@@ -51,10 +64,11 @@
                 </button>
             </div>
         </form>
-        
+
+        <!-- Enlace para volver al login -->
         <div style="text-align:center; margin-top:10px;">
-    <a href="#" id="backToLogin">¿Ya tienes cuenta? Inicia sesión</a>
-</div>
+            <a href="#" id="backToLogin">¿Ya tienes cuenta? Inicia sesión</a>
+        </div>
     </div>
 </body>
 </html>
